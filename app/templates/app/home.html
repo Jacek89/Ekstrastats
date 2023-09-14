@@ -1,0 +1,8 @@
+{% extends "app/base.html" %}
+{% block content %}
+
+{% for team in teams_extra %}
+    <h1>{{team.name}}</h1>
+{% endfor %}
+
+{% endblock content %}
