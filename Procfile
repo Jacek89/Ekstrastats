@@ -1,1 +1,1 @@
-web: gunicorn 'Ekstrastats.wsgi' --timeout 0
+web: gunicorn 'Ekstrastats.wsgi'
