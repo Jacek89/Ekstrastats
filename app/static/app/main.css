@@ -54,11 +54,27 @@ body {
 }
 
 .logo-anchor {
- text-decoration: none;
+  text-decoration: none;
 }
 
 .logo:hover {
   -ms-transform: scale(1.1); /* IE 9 */
   -webkit-transform: scale(1.1); /* Safari 3-8 */
   transform: scale(1.1);
+}
+
+.table-anchor {
+  text-decoration: none;
+  color: black;
+}
+
+.table-anchor:hover {
+  text-decoration: none;
+  color: #453f3d;
+}
+
+
+.table-logo {
+  width: 20px;
+  height: 20px;
 }

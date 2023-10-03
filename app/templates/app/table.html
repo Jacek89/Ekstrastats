@@ -1,5 +1,46 @@
 {% extends "app/base.html" %}
 {% block content %}
-    Table
-
+<h1 class="py-2">Ekstraklasa Season 2023/2024</h1>
+<table class="table table-hover">
+  <thead class="thead-light">
+  <tr>
+    <th>Position</th>
+    <th>Team</th>
+    <th>Played</th>
+    <th>Won</th>
+    <th>Drawn</th>
+    <th>Lost</th>
+    <th>GF</th>
+    <th>GA</th>
+    <th>GD</th>
+    <th>Points</th>
+  </tr>
+  </thead>
+    {% for line in table %}
+      {% for team, stats in line.items %}
+        {% if stats.position == 1 %}
+          <tr class="table-success">
+        {% elif stats.position == 2 or stats.position == 3 %}
+          <tr  class="table-active">
+        {% elif stats.position > 15 %}
+          <tr class="table-danger">
+        {% else %}
+          <tr>
+        {% endif %}
+          <td>{{stats.position}}</td>
+          <td><a class="table-anchor" href="{% url 'team_main' stats.team_id %}">
+            <img class="table-logo me-2" src="{{ stats.logo }}">{{team}}
+          </a></td>
+          <td>{{stats.total_matches}}</td>
+          <td>{{stats.total_wins}}</td>
+          <td>{{stats.total_draws}}</td>
+          <td>{{stats.total_loses}}</td>
+          <td>{{stats.total_goals}}</td>
+          <td>{{stats.total_goals_lost}}</td>
+          <td>{{stats.goal_difference}}</td>
+          <td class="fw-bold">{{stats.total_points}}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</table>
 {% endblock content %}

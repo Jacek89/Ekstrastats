@@ -29,5 +29,3 @@ def add_teams():
             capacity=team['venue']['capacity'],
             imported_from=str('AF#' + str(team['team']['id'])),
         )
-
-add_teams()
