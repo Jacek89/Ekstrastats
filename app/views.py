@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Team
 from .utils.table import TableCounter
+from django.http import JsonResponse
 
 
 def index(request):
@@ -24,8 +25,22 @@ def table(request):
     contex = {
         "table": tablek
     }
-
     return render(request, "app/table.html", contex)
+
+
+def process_table(request):
+    tablek = TableCounter().tableJSON()
+
+    for row in tablek:
+        team = next(iter(row))
+        team = Team.objects.get(name=team)
+        row[team.name]["team_id"] = team.id
+        row[team.name]["logo"] = team.logo
+
+    response = {
+        "data": tablek
+    }
+    return JsonResponse(response)
 
 
 def team_main(request, team_id):
