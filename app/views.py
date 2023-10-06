@@ -15,17 +15,8 @@ def index(request):
 
 def table(request):
 
-    tablek = TableCounter().tableJSON()
-    for row in tablek:
-        team = next(iter(row))
-        team = Team.objects.get(name=team)
-        row[team.name]["team_id"] = team.id
-        row[team.name]["logo"] = team.logo
 
-    contex = {
-        "table": tablek
-    }
-    return render(request, "app/table.html", contex)
+    return render(request, "app/table.html")
 
 
 def process_table(request):

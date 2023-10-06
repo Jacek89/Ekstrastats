@@ -1,46 +1,112 @@
 {% extends "app/base.html" %}
+{% load static %}
 {% block content %}
-<h1 class="py-2">Ekstraklasa Season 2023/2024</h1>
-<table class="table table-hover">
-  <thead class="thead-light">
-  <tr>
-    <th>Position</th>
-    <th>Team</th>
-    <th>Played</th>
-    <th>Won</th>
-    <th>Drawn</th>
-    <th>Lost</th>
-    <th>GF</th>
-    <th>GA</th>
-    <th>GD</th>
-    <th>Points</th>
-  </tr>
-  </thead>
-    {% for line in table %}
-      {% for team, stats in line.items %}
-        {% if stats.position == 1 %}
-          <tr class="table-success">
-        {% elif stats.position == 2 or stats.position == 3 %}
-          <tr  class="table-active">
-        {% elif stats.position > 15 %}
-          <tr class="table-danger">
-        {% else %}
-          <tr>
-        {% endif %}
-          <td>{{stats.position}}</td>
-          <td><a class="table-anchor" href="{% url 'team_main' stats.team_id %}">
-            <img class="table-logo me-2" src="{{ stats.logo }}">{{team}}
-          </a></td>
-          <td>{{stats.total_matches}}</td>
-          <td>{{stats.total_wins}}</td>
-          <td>{{stats.total_draws}}</td>
-          <td>{{stats.total_loses}}</td>
-          <td>{{stats.total_goals}}</td>
-          <td>{{stats.total_goals_lost}}</td>
-          <td>{{stats.goal_difference}}</td>
-          <td class="fw-bold">{{stats.total_points}}</td>
-        </tr>
-      {% endfor %}
-    {% endfor %}
-</table>
+<h1 class="title py-2">Ekstraklasa Season 2023/2024</h1>
+<!--<table class="table table-hover">-->
+<!--  <thead class="thead-light">-->
+<!--  <tr>-->
+<!--    <th>Position</th>-->
+<!--    <th>Team</th>-->
+<!--    <th>Played</th>-->
+<!--    <th>Won</th>-->
+<!--    <th>Drawn</th>-->
+<!--    <th>Lost</th>-->
+<!--    <th>GF</th>-->
+<!--    <th>GA</th>-->
+<!--    <th>GD</th>-->
+<!--    <th>Points</th>-->
+<!--  </tr>-->
+<!--  </thead>-->
+<!--    {% for line in table %}-->
+<!--      {% for team, stats in line.items %}-->
+<!--        {% if stats.position == 1 %}-->
+<!--          <tr class="table-success">-->
+<!--        {% elif stats.position == 2 or stats.position == 3 %}-->
+<!--          <tr  class="table-active">-->
+<!--        {% elif stats.position > 15 %}-->
+<!--          <tr class="table-danger">-->
+<!--        {% else %}-->
+<!--          <tr>-->
+<!--        {% endif %}-->
+<!--          <td>{{stats.position}}</td>-->
+<!--          <td><a class="table-anchor" href="{% url 'team_main' stats.team_id %}">-->
+<!--            <img class="table-logo me-2" src="{{ stats.logo }}">{{team}}-->
+<!--          </a></td>-->
+<!--          <td>{{stats.total_matches}}</td>-->
+<!--          <td>{{stats.total_wins}}</td>-->
+<!--          <td>{{stats.total_draws}}</td>-->
+<!--          <td>{{stats.total_loses}}</td>-->
+<!--          <td>{{stats.total_goals}}</td>-->
+<!--          <td>{{stats.total_goals_lost}}</td>-->
+<!--          <td>{{stats.goal_difference}}</td>-->
+<!--          <td class="fw-bold">{{stats.total_points}}</td>-->
+<!--        </tr>-->
+<!--      {% endfor %}-->
+<!--    {% endfor %}-->
+<!--</table>-->
+
+<div id="success">
+
+</div>
+
+
+<div id="loading">
+  <img id="loading-gif" src="{% static 'app/loading.gif' %}" alt="loading">
+  <p id="loading-text">Table is calculating. Please wait.</p>
+</div>
+
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript'>
+
+var create_table = function(data){
+  let html = ("<table id='table' class='table table-hover'><thead class='thead-light'><tr><th>Position</th><th>Team</th><th>Played</th><th>Won</th><th>Drawn</th><th>Lost</th><th>GF</th><th>GA</th><th>GD</th><th>Points</th></tr></thead>");
+  for (let i = 0; i < 18; i++) {
+    for (const [key, value] of Object.entries(data.data[i])) {
+      if (value.position == 1) {
+        html +=("<tr class='table-success'>");
+      } else if (value.position == 2 || value.position == 3) {
+        html +=("<tr class='table-active'>");
+       } else if (value.position > 15) {
+        html +=("<tr class='table-danger'>");
+      } else {
+        html +=("<tr>");
+      }
+      html +=("<td>" +value.position+ "</td>");
+      var url ="{% url 'team_main' 1234 %}".replace(/1234/, value.team_id.toString());
+      html +=("<td><a class='table-anchor' href='"+url+"'><img class='table-logo me-2' src='"+value.logo+"'>" +key+ "</a></td>");
+      html +=("<td>" +value.total_matches+ "</td>");
+      html +=("<td>" +value.total_wins+ "</td>");
+      html +=("<td>" +value.total_draws+ "</td>");
+      html +=("<td>" +value.total_loses+ "</td>");
+      html +=("<td>" +value.total_goals+ "</td>");
+      html +=("<td>" +value.total_goals_lost+ "</td>");
+      html +=("<td>" +value.goal_difference+ "</td>");
+      html +=("<td class='fw-bold'>" +value.total_points+ "</td>");
+      html +=("</tr>");
+    }
+  }
+  html += "</table>"
+  $('#success').html(html);
+}
+
+var replace_data = function(data){
+        $('#success').show();
+        $('#loading').remove();
+        create_table(data);
+}
+
+$(document).ready(function(){
+  $("#success").hide();
+  $.ajax({
+    url: '{% url "process_table" %}',
+    data_type: 'html',
+    success: function(data){
+    replace_data(data);
+    }
+  });
+});
+
+
+</script>
+
 {% endblock content %}
