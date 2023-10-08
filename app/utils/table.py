@@ -19,7 +19,16 @@ class TableCounter:
     Methods:
     tableJSON -- returns the Ekstraklasa table for the specified or the default period in JSON format
     """
-    def __init__(self, date_from="2023-06-30", date_to=date.today().strftime("%Y-%m-%d")):
+    def __init__(self, date_from=None, date_to=None):
+        if date_from is not None:
+            self.date_from = date_from
+        else:
+            date_from = "2023-07-01"
+        if date_to is not None:
+            self.date_to = date_to
+        else:
+            date_to = date.today().strftime("%Y-%m-%d")
+
         self.date_from = date_from
         self.date_to = date_to
         self.games = Game.objects.filter(Q(date__range=[self.date_from, self.date_to]) & ~Q(result="None-None"))

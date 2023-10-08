@@ -1,49 +1,28 @@
 {% extends "app/base.html" %}
 {% load static %}
 {% block content %}
-<h1 class="title py-2">Ekstraklasa Season 2023/2024</h1>
-<!--<table class="table table-hover">-->
-<!--  <thead class="thead-light">-->
-<!--  <tr>-->
-<!--    <th>Position</th>-->
-<!--    <th>Team</th>-->
-<!--    <th>Played</th>-->
-<!--    <th>Won</th>-->
-<!--    <th>Drawn</th>-->
-<!--    <th>Lost</th>-->
-<!--    <th>GF</th>-->
-<!--    <th>GA</th>-->
-<!--    <th>GD</th>-->
-<!--    <th>Points</th>-->
-<!--  </tr>-->
-<!--  </thead>-->
-<!--    {% for line in table %}-->
-<!--      {% for team, stats in line.items %}-->
-<!--        {% if stats.position == 1 %}-->
-<!--          <tr class="table-success">-->
-<!--        {% elif stats.position == 2 or stats.position == 3 %}-->
-<!--          <tr  class="table-active">-->
-<!--        {% elif stats.position > 15 %}-->
-<!--          <tr class="table-danger">-->
-<!--        {% else %}-->
-<!--          <tr>-->
-<!--        {% endif %}-->
-<!--          <td>{{stats.position}}</td>-->
-<!--          <td><a class="table-anchor" href="{% url 'team_main' stats.team_id %}">-->
-<!--            <img class="table-logo me-2" src="{{ stats.logo }}">{{team}}-->
-<!--          </a></td>-->
-<!--          <td>{{stats.total_matches}}</td>-->
-<!--          <td>{{stats.total_wins}}</td>-->
-<!--          <td>{{stats.total_draws}}</td>-->
-<!--          <td>{{stats.total_loses}}</td>-->
-<!--          <td>{{stats.total_goals}}</td>-->
-<!--          <td>{{stats.total_goals_lost}}</td>-->
-<!--          <td>{{stats.goal_difference}}</td>-->
-<!--          <td class="fw-bold">{{stats.total_points}}</td>-->
-<!--        </tr>-->
-<!--      {% endfor %}-->
-<!--    {% endfor %}-->
-<!--</table>-->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <h1 class="title py-2">Ekstraklasa Season 2023/2024</h1>
+    </div>
+    <div class="col-md-6 text-center">
+      {% csrf_token %}
+      <form id="table-form" class="pt-3">
+        {{ form }}
+        <input type="submit" value="Filter Matches">
+      </form>
+
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
 
 <div id="success">
 
@@ -91,7 +70,7 @@ var create_table = function(data){
 
 var replace_data = function(data){
         $('#success').show();
-        $('#loading').remove();
+        $('#loading').hide();
         create_table(data);
 }
 
@@ -99,10 +78,25 @@ $(document).ready(function(){
   $("#success").hide();
   $.ajax({
     url: '{% url "process_table" %}',
-    data_type: 'html',
     success: function(data){
     replace_data(data);
     }
+  });
+});
+
+$(function() {
+  $('#table-form').on('submit', function(event) {
+    event.preventDefault();
+    $("#success").hide();
+    $('#loading').show();
+    $.ajax({
+      url: '{% url "process_table" %}',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function(data){
+      replace_data(data);
+      }
+    });
   });
 });
 

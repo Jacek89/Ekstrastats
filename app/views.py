@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import Team
 from .utils.table import TableCounter
 from django.http import JsonResponse
+from .forms import TableDate
 
 
 def index(request):
@@ -15,12 +16,19 @@ def index(request):
 
 def table(request):
 
+    contex = {
+        "form": TableDate()
+    }
 
-    return render(request, "app/table.html")
+    return render(request, "app/table.html", contex)
 
 
 def process_table(request):
-    tablek = TableCounter().tableJSON()
+
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
+
+    tablek = TableCounter(date_from=date_from, date_to=date_to).tableJSON()
 
     for row in tablek:
         team = next(iter(row))
