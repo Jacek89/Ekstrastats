@@ -1,4 +1,5 @@
 {% extends "app/base.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
 
@@ -9,25 +10,14 @@
     </div>
     <div class="col-md-6 text-center">
       {% csrf_token %}
-      <form id="table-form" class="pt-3">
-        {{ form }}
-        <input type="submit" value="Filter Matches">
-      </form>
-
-
+      {% crispy form form.helper %}
     </div>
-
   </div>
-
-
 </div>
-
-
 
 <div id="success">
 
 </div>
-
 
 <div id="loading">
   <img id="loading-gif" src="{% static 'app/loading.gif' %}" alt="loading">
