@@ -218,6 +218,11 @@ class TableCounter:
         for k, v in self.table.items():
             ret.append({k: v})
             ret[-1][k]["position"] = list(self.table.keys()).index(k)+1
+            team = Team.objects.get(name=k)
+            ret[-1][k]["team_id"] = team.id
+            ret[-1][k]["logo"] = team.logo
+
+
         return ret
 
     def __add_remaining_teams(self):

@@ -3,6 +3,7 @@ from .models import Team
 from .utils.table import TableCounter
 from django.http import JsonResponse
 from .forms import TableDate
+from django.core.cache import cache
 
 
 def index(request):
@@ -28,13 +29,14 @@ def process_table(request):
     date_from = request.GET.get("date_from")
     date_to = request.GET.get("date_to")
 
-    tablek = TableCounter(date_from=date_from, date_to=date_to).tableJSON()
-
-    for row in tablek:
-        team = next(iter(row))
-        team = Team.objects.get(name=team)
-        row[team.name]["team_id"] = team.id
-        row[team.name]["logo"] = team.logo
+    if date_to is None and date_from is None:
+        if cache.get('table') is None:
+            tablek = TableCounter().tableJSON()
+            cache.add("table", tablek, 10000)
+        else:
+            tablek = cache.get('table')
+    else:
+        tablek = TableCounter(date_from=date_from, date_to=date_to).tableJSON()
 
     response = {
         "data": tablek
