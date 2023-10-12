@@ -32,7 +32,7 @@ def process_table(request):
     if date_to is None and date_from is None:
         if cache.get('table') is None:
             tablek = TableCounter().tableJSON()
-            cache.add("table", tablek, 10000)
+            cache.add("table", tablek, 600000) # one week
         else:
             tablek = cache.get('table')
     else:
