@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -82,15 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Ekstrastats.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-db_config = dj_database_url.config(default=os.environ.get("DATABASE_URL"))
-db_config['ATOMIC_REQUESTS'] = True
-
-DATABASES = {
-    'default': db_config,
-}
+# Cache & DB_URL
 
 CACHES = {
     "default": {
@@ -101,6 +93,9 @@ CACHES = {
         }
     }
 }
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -165,3 +160,12 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+db_config = dj_database_url.config(default=DATABASE_URL)
+db_config['ATOMIC_REQUESTS'] = True
+
+DATABASES = {
+    'default': db_config,
+}
