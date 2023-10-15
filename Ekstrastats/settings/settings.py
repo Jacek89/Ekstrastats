@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'csp.middleware.CSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -160,6 +161,15 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 300  # set low, but when site is ready for deployment, set to at least 15768000 (6 months)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
+
+# Content Security Policy
+
+CSP_IMG_SRC = ("'self'", "media-3.api-sports.io", "media-2.api-sports.io", "media-1.api-sports.io")
+CSP_STYLE_SRC = ("'self'", "fonts.googleapis.com", "cdn.jsdelivr.net")
+CSP_SCRIPT_SRC = ("'self'", "ajax.googleapis.com", "cdn.jsdelivr.net")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com/")
+CSP_INCLUDE_NONCE_IN = ['script-src']
 
 # Load local settings if exists
 

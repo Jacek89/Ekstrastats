@@ -24,8 +24,7 @@
   <p id="loading-text">Table is calculating. Please wait.</p>
 </div>
 
-<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-<script type='text/javascript'>
+<script nonce="{{request.csp_nonce}}">
 
 var create_table = function(data){
   let html = ("<table id='table' class='table table-hover'><thead class='thead-light'><tr><th>Position</th><th>Team</th><th>Played</th><th>Won</th><th>Drawn</th><th>Lost</th><th>GF</th><th>GA</th><th>GD</th><th>Points</th></tr></thead>");

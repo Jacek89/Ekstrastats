@@ -202,6 +202,24 @@ files = [
 django = ">=3.2"
 
 [[package]]
+name = "django-csp"
+version = "3.7"
+description = "Django Content Security Policy support."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django_csp-3.7-py2.py3-none-any.whl", hash = "sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a"},
+    {file = "django_csp-3.7.tar.gz", hash = "sha256:01eda02ad3f10261c74131cdc0b5a6a62b7c7ad4fd017fbefb7a14776e0a9727"},
+]
+
+[package.dependencies]
+Django = ">=1.8"
+
+[package.extras]
+jinja2 = ["jinja2 (>=2.9.6)"]
+tests = ["jinja2 (>=2.9.6)", "mock (==1.0.1)", "pep8 (==1.4.6)", "pytest (<4.0)", "pytest-django", "pytest-flakes (==1.0.1)", "pytest-pep8 (==1.0.6)", "six (==1.12.0)"]
+
+[[package]]
 name = "django-redis"
 version = "5.4.0"
 description = "Full featured redis cache backend for Django."
@@ -481,4 +499,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "dc2f9a8dbb5ec0c8e800bd5fd6017a2decaab99373070badc1bc05f2106fd909"
+content-hash = "d661ae5ea5fe793cc337e108428c99bf02862322a46b6c9b9a2747033a42f287"
