@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -165,7 +166,7 @@ SECURE_HSTS_PRELOAD = True
 
 # Content Security Policy
 
-CSP_IMG_SRC = ("'self'", "media-3.api-sports.io", "media-2.api-sports.io", "media-1.api-sports.io")
+CSP_IMG_SRC = ("'self'", "media-3.api-sports.io", "media-2.api-sports.io", "media-1.api-sports.io", "media-4.api-sports.io")
 CSP_STYLE_SRC = ("'self'", "fonts.googleapis.com", "cdn.jsdelivr.net")
 CSP_SCRIPT_SRC = ("'self'", "ajax.googleapis.com", "cdn.jsdelivr.net")
 CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com/")
@@ -193,3 +194,9 @@ db_config['ATOMIC_REQUESTS'] = True
 DATABASES = {
     'default': db_config,
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'test_database'
+    }

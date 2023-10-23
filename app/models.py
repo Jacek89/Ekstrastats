@@ -1,6 +1,8 @@
 from django.db import models
-from datetime import datetime, date
+from datetime import date
 from django.db.models import Q
+from django.utils import timezone
+
 
 class BaseModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -9,14 +11,14 @@ class BaseModel(models.Model):
     comments = models.CharField(max_length=200, blank=True, null=True)
 
     imported_from = models.CharField(max_length=200, blank=True, null=True)
-    imported_at = models.DateTimeField(blank=True, null=True, default=datetime.now)
+    imported_at = models.DateTimeField(blank=True, null=True, default=timezone.now)
 
     class Meta:
         abstract = True
 
     @classmethod
     def get_all_imported_id(cls):
-        return cls.objects.values_list('imported_from', flat=True)
+        return cls.objects.filter(imported_from__isnull=False).values_list('imported_from', flat=True)
 
 
 class Team(BaseModel):
@@ -55,7 +57,8 @@ class Player(BaseModel):
 
     @property
     def age(self):
-        return int((date.today() - self.birth_date).days / 365.25)
+        return date.today().year - self.birth_date.year - \
+               ((date.today().month, date.today().day) < (self.birth_date.month, self.birth_date.day))
 
     def __str__(self):
         return self.full_name
@@ -80,7 +83,7 @@ class Game(BaseModel):
 
 class Goal(BaseModel):
     db_table = "Goal"
-    scorer = models.ForeignKey(Player, related_name="_player_goals", on_delete=models.SET_NULL, blank=True, null=True)
+    scorer = models.ForeignKey(Player, related_name="player_goals", on_delete=models.SET_NULL, blank=True, null=True)
     assistant = models.ForeignKey(Player, related_name="player_assists", on_delete=models.SET_NULL, blank=True, null=True)
     minute = models.IntegerField(blank=True, null=True)
     minute_extra = models.IntegerField(blank=True, null=True)
@@ -89,5 +92,5 @@ class Goal(BaseModel):
     # replay =
     penalty = models.BooleanField(default=False)
     own_goal = models.BooleanField(default=False)
-    own_goal_scorer = models.ForeignKey(Player, related_name="_player_own_goals", on_delete=models.SET_NULL, blank=True, null=True, default=None)
+    own_goal_scorer = models.ForeignKey(Player, related_name="player_own_goals", on_delete=models.SET_NULL, blank=True, null=True, default=None)
     game = models.ForeignKey(Game, related_name="game_goals", on_delete=models.CASCADE, blank=True, null=True)
