@@ -1,15 +1,8 @@
-import django
-import os
-
 import pytz
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Ekstrastats.settings.settings')
-django.setup()
-
-
 from app.models import Team, Player, Game, Goal
 import factory.fuzzy
 from datetime import date, datetime
+from faker import Faker as RealFaker
 
 
 class TeamModelFactory(factory.django.DjangoModelFactory):
@@ -19,6 +12,7 @@ class TeamModelFactory(factory.django.DjangoModelFactory):
                   "Victoria", "Fortuna", "Gryf", "Arka", "Grom", "Chemik", "Orzeł", "Iskra", "Olimp", "Błękitni",
                   "Ruch", "Znicz", "Rozwój", "Tęcza", "Motor", "Metal", "Orkan", "Legion", "Świt", "Gwiazda", "Zryw",
                   "Tempo", "Zawisza", "Strumyk", "Przebój", "Błysk", "Puszcza", "Olimpia", "Jutrzenka", "Jastrząb"]
+
     class Meta:
         model = Team
         exclude = ('club_names', "club_name")
@@ -38,17 +32,18 @@ class TeamModelFactory(factory.django.DjangoModelFactory):
 
 
 class PlayerModelFactory(factory.django.DjangoModelFactory):
-    locale = factory.fuzzy.FuzzyChoice(["cs_CZ", "da_DK", "de_DE", "en_GB", "es_ES", "fr_FR", "hr_HR", "hu_HU",
-                                        "it_IT", "nl_NL", "no_NO", "pt_BR", "pt_PT", "ro_RO", "sk_SK", "fr_CH",
-                                        "de_AT", "es_AR", "pl_PL"])
     class Meta:
         model = Player
-        exclude = ("locale",)
 
-    first_name = factory.Faker("first_name_male", locale=locale)
-    last_name = factory.Faker("last_name_male", locale=locale)
+    class Params:
+        locale = factory.fuzzy.FuzzyChoice(["cs_CZ", "da_DK", "de_DE", "en_GB", "es_ES", "fr_FR", "hr_HR", "hu_HU",
+                                            "it_IT", "nl_NL", "no_NO", "pt_BR", "pt_PT", "ro_RO", "sk_SK", "fr_CH",
+                                            "de_AT", "es_AR"] + (["pl_PL"]*20))
+
+    first_name = factory.LazyAttribute(lambda a: RealFaker(a.locale).first_name_male())
+    last_name = factory.LazyAttribute(lambda a: RealFaker(a.locale).last_name_male())
     full_name = factory.LazyAttribute(lambda o: f"{o.first_name} {o.last_name}")
-    nationality = factory.Faker("current_country", locale=locale)
+    nationality = factory.LazyAttribute(lambda a: RealFaker(a.locale).current_country())
     birth_date = factory.fuzzy.FuzzyDate(
         start_date=date.today().replace(year=date.today().year - 35),
         end_date=date.today().replace(year=date.today().year - 16)
@@ -83,23 +78,13 @@ class GameModelFactory(factory.django.DjangoModelFactory):
     walkover = False
 
 
-
-# game = GameModelFactory.build()
-# print(game.team_home.name)
-# print(game.team_away.name)
-# print(game.halftime)
-# print(game.result)
-# print(game.referee)
-# print(game.attendance)
-# print(game.date)
-
 class GoalModelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Goal
 
     class Params:
         minut = factory.fuzzy.FuzzyInteger(0, 90)
-        extra_minute = factory.fuzzy.FuzzyChoice(["None", 1, 2, 3, 4, 5])
+        extra_minute = factory.fuzzy.FuzzyChoice([None, 1, 2, 3, 4, 5])
         pen = factory.fuzzy.FuzzyInteger(1, 10)
 
     scorer = factory.SubFactory(PlayerModelFactory)
@@ -124,12 +109,3 @@ class GoalModelFactory(factory.django.DjangoModelFactory):
             return True
         else:
             return False
-
-
-
-# goal = GoalModelFactory.build()
-# print(goal.team_scored)
-# print(goal.team_against)
-# print(goal.minute)
-# print(goal.minute_extra)
-# print(goal.penalty)
