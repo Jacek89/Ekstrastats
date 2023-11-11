@@ -66,7 +66,7 @@ var replace_data = function(data){
 $(document).ready(function(){
   $("#success").hide();
   $.ajax({
-    url: '{% url "process_table" %}',
+    url: '{% url "table" %}',
     success: function(data){
     replace_data(data);
     }
@@ -79,7 +79,7 @@ $(function() {
     $("#success").hide();
     $('#loading').show();
     $.ajax({
-      url: '{% url "process_table" %}',
+      url: '{% url "table" %}',
       data: $(this).serialize(),
       dataType: 'json',
       success: function(data){

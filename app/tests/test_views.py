@@ -36,12 +36,12 @@ class TestViewTable(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/table.html')
 
-    def test_view_process_table_ajax_response(self):
-        response = self.client.get(reverse('process_table'))
+    def test_view_table_ajax_response(self):
+        response = self.client.get(reverse('table'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-    def test_view_process_table_teams_amount(self):
-        response = self.client.get(reverse('process_table'))
+    def test_view_table_teams_amount(self):
+        response = self.client.get(reverse('table'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(len(response.json()["data"]), 18)
 
 
