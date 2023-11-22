@@ -74,7 +74,6 @@ body {
   color: #453f3d;
 }
 
-
 .table-logo {
   width: 20px;
   height: 20px;
@@ -98,3 +97,60 @@ font-family: Impact, sans-serif;
   font-family: Helvetica, sans-serif;
 }
 
+.team-top {
+ background: url("/static/app/team-bg.png");
+ padding: 20px;
+}
+
+.tab-hide {
+  display: none;
+}
+
+.tab-display {
+  display: block;
+}
+
+.tab-button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+.tab-bar {
+ overflow: hidden;
+ border-bottom: 1px solid #ccc;
+
+}
+
+/* Change background color of buttons on hover */
+.tab-bar button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab-bar button.active {
+ background-color: #ccc;
+}
+
+.table-results {
+ width: 600px;
+ margin-left: 2%;
+}
+
+.player-photo {
+  transition: transform .2s;
+}
+
+.player-photo-anchor {
+  text-decoration: none;
+}
+
+.player-photo:hover {
+  -ms-transform: scale(1.1); /* IE 9 */
+  -webkit-transform: scale(1.1); /* Safari 3-8 */
+  transform: scale(1.1);

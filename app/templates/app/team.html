@@ -1,19 +1,91 @@
 {% extends "app/base.html" %}
 {% block content %}
-<br><br>
 <div>
-    <img src="{{team.logo}}">
-    <h1>{{team.name}} - {{team.id}}</h1>
-        <hr><hr>
-    {% for player in team.squad.all %}
-        <h3>{{player.full_name}}  -  {{player.imported_from}}  -  {{player.id}}</h3>
-    {% endfor %}
-    <hr><hr>
-    {% for game in team.finished_games.all %}
-        <h3>{{game.team_home}} {{game.result}} {{game.team_away}}</h3>
-    {% endfor %}
+    <div class="team-top">
+        <img src="{{team.logo}}">
+        <h1 class="title pt-2">{{team.name}}</h1>
+    </div>
+
+    <div class="tab-bar mb-3">
+      <button id="overBtn" class="tab-button active">Overview</button>
+      <button id="squadBtn" class="tab-button">Squad</button>
+      <button id="resultsBtn" class="tab-button">Results</button>
+      <button id="statsBtn" class="tab-button">Statistics</button>
+    </div>
+
+
+    <div id="overview" class="tab-content tab-display">
+        Overview
+    </div>
+
+    <div id="squad" class="tab-content tab-hide">
+            {% for position, players in players.items %}
+            <h3 class="pt-1 pb-3 fw-bold">{{position}}s</h3>
+            <div class="row row-cols-auto">
+                {% for player in players %}
+                <div class="col center-block text-center player-photo">
+                    <img src="{{player.photo}}"><p class="fs-5 fw-light border-bottom pt-1">{{player.full_name}}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+    </div>
+
+    <div class="tab-content tab-hide" id="results">
+        {% if games %}
+        <table class="table table-light table-results">
+            {% for game in games %}
+            <tr>
+                <td class="table-dark">{{game.date|date:"j N"}}<br>{{game.date|date:"H:i"}}</td>
+                <td class="text-end fs-5">{{game.team_home}} <img class='table-logo' src="{{game.team_home.logo}}"></td>
+                <td class="text-center fs-4">{{game.result}}</td>
+                <td class="text-start fs-5"><img class='table-logo' src="{{game.team_away.logo}}"> {{game.team_away}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <p>no games already played</p>
+        {% endif %}
+    </div>
+
+    <div class="tab-content tab-hide" id="statistics">
+        STATISTICS
+    </div>
+
 </div>
 
+<script nonce="{{request.csp_nonce}}">
+var openTab = function(event, tab) {
+  var i, tablinks;
+  var x = document.getElementsByClassName("tab-content");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tab-button");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tab).style.display = "block";
+  event.currentTarget.className += " active";
+}
 
+$( "#squadBtn" ).on( "click", function(event) {
+  openTab(event, 'squad');
+} );
+
+$( "#resultsBtn" ).on( "click", function(event) {
+  openTab(event, 'results');
+} );
+
+$( "#overBtn" ).on( "click", function(event) {
+  openTab(event, 'overview');
+} );
+
+$( "#statsBtn" ).on( "click", function(event) {
+  openTab(event, 'statistics');
+} );
+
+</script>
 
 {% endblock content %}

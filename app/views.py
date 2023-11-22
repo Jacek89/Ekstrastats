@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Team
+from .models import Team, Player, Game
 from .utils.table import TableCounter
 from django.http import JsonResponse
 from .forms import TableDate
@@ -44,9 +44,16 @@ class TableView(View):
 
 
 def team_main(request, team_id):
+    team = Team.objects.get(id=team_id)
+    players = {}
+    games = team.finished_games().order_by("-date")
+    for position in ["Goalkeeper", "Defender", "Midfielder", "Attacker"]:
+        players[position] = Player.objects.filter(team=team, position=position)
 
     contex = {
-        "team": Team.objects.get(id=team_id)
+        "team": team,
+        "players": players,
+        "games": games
     }
 
     return render(request, "app/team.html", contex)
