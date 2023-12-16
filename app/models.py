@@ -2,7 +2,7 @@ from django.db import models
 from datetime import date
 from django.db.models import Q
 from django.utils import timezone
-
+from Ekstrastats.settings.settings import SEASON
 
 class BaseModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -34,8 +34,8 @@ class Team(BaseModel):
     class Meta:
         ordering = ['name']
 
-    def finished_games(self):
-        return Game.objects.filter(~Q(result="None-None"), Q(team_home=self.id) | Q(team_away=self.id))
+    def finished_games(self, season=SEASON):
+        return Game.objects.filter(Q(season=season), ~Q(result="None-None"), Q(team_home=self.id) | Q(team_away=self.id))
 
     def __str__(self):
         return self.name

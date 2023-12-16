@@ -1,10 +1,14 @@
 from django.shortcuts import render
-from .models import Team, Player, Game
+from .models import Team, Player, Game, Goal
 from .utils.table import TableCounter
 from django.http import JsonResponse
 from .forms import TableDate
 from django.core.cache import cache
 from django.views import View
+from django.db.models import Count
+from Ekstrastats.settings.settings import SEASON
+from .utils.statistics import count_intervals
+
 
 
 def index(request):
@@ -48,7 +52,7 @@ def team_main(request, team_id):
     players = {}
     games = team.finished_games().order_by("-date")
     for position in ["Goalkeeper", "Defender", "Midfielder", "Attacker"]:
-        players[position] = Player.objects.filter(team=team, position=position)
+        players[position] = Player.objects.filter(team__id=team_id, position=position)
 
     contex = {
         "team": team,
@@ -57,3 +61,30 @@ def team_main(request, team_id):
     }
 
     return render(request, "app/team.html", contex)
+
+
+def statistics(request):
+
+    scorers = Player.objects.annotate(goals_count=Count('player_goals')).order_by('-goals_count')[:5]
+    assists = Player.objects.annotate(assists_count=Count('player_assists')).order_by('-assists_count')[:5]
+    canadian = Player.objects.annotate(
+        canadian_count=Count('player_goals', distinct=True) + Count('player_assists', distinct=True)
+                                       ).order_by('-canadian_count')[:5]
+
+    goal_minutes = Goal.objects.filter(game__season=SEASON).values_list('minute', flat=True)
+    all_games = Game.objects.filter(season=SEASON).count()
+    goals_15 = dict(count_intervals(goal_minutes, [15, 30, 45, 60, 75, 90]))
+    goals_45 = dict(count_intervals(goal_minutes, [45, 90]))
+    goals_sum = sum(goals_45.values())
+
+    contex = {
+        "scorers": scorers,
+        "assists": assists,
+        "canadian": canadian,
+        "goals_15": goals_15,
+        "goals_45": goals_45,
+        "goals_sum": goals_sum,
+        "goals_per_game": round(len(goal_minutes) / all_games, 2)
+    }
+
+    return render(request, "app/statistics.html", contex)

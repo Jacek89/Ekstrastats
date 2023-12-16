@@ -154,3 +154,14 @@ font-family: Impact, sans-serif;
   -ms-transform: scale(1.1); /* IE 9 */
   -webkit-transform: scale(1.1); /* Safari 3-8 */
   transform: scale(1.1);
+ }
+
+.stats-logo {
+  width: 150px;
+  height: 150px;
+}
+
+.stats-top {
+ background: url("/static/app/stats-bg.png");
+ padding: 20px;
+}

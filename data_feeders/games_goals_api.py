@@ -2,16 +2,18 @@ import os
 import django
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Ekstrastats.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Ekstrastats.settings.settings')
 django.setup()
 
 from app.models import Goal, Player, Game, Team
 import requests
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
+import pytz
+import time
 
 URL = "https://v3.football.api-sports.io"
-API_KEY = os.environ.get("RAPID_API_KEY")
+API_KEY = "9b8cebc8a55af8e1f784f2ef55d74523"
 LEAGUE_ID = 106
 SEASON = 2023
 
@@ -31,12 +33,14 @@ def get_games(round=None, d_from=None, d_to=None):
     else:
         return "Wrong values are given"
     response_fixture = requests.get(url=f"{URL}/fixtures", params=params_fixtures, headers=header).json()
+    print(response_fixture)
     for game in response_fixture['response']:
+        time.sleep(7)
         walkover = False
         import_id = f"AF#{game['fixture']['id']}"
         referee = game['fixture']['referee']
         season = game['league']['season']
-        date = datetime.fromtimestamp(game['fixture']['timestamp'])
+        date = datetime.fromtimestamp(game['fixture']['timestamp']).replace(tzinfo=pytz.UTC)
         team_home = f"AF#{game['teams']['home']['id']}"
         team_away = f"AF#{game['teams']['away']['id']}"
 
@@ -95,6 +99,18 @@ def get_events(id_fixture: int, id_team1: int, id_team2: int):
                 own_goal = True
                 own_goal_scorer = f"AF#{event['player']['id']}"
 
+            if scorer:
+                try:
+                    Player.objects.get(imported_from=scorer)
+                except ObjectDoesNotExist:
+                    pass
+
+            if assistant:
+                try:
+                    Player.objects.get(imported_from=assistant)
+                except ObjectDoesNotExist:
+                    pass
+
             try:
                 Goal.objects.create(
                     scorer=Player.objects.get(imported_from=scorer) if scorer else None,
@@ -111,4 +127,8 @@ def get_events(id_fixture: int, id_team1: int, id_team2: int):
                 )
             except ObjectDoesNotExist:
                 print(f"GOAL IMPORT FAILED: fixture: {id_fixture}, minute: {minute}")
+
+
+get_games(d_from="2023-11-22", d_to="2023-11-30")
+
 
