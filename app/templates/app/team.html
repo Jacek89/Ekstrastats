@@ -23,9 +23,11 @@
             <h3 class="pt-1 pb-3 fw-bold">{{position}}s</h3>
             <div class="row row-cols-auto">
                 {% for player in players %}
-                <div class="col center-block text-center player-photo">
-                    <img src="{{player.photo}}"><p class="fs-5 fw-light border-bottom pt-1">{{player.full_name}}</p>
-                </div>
+                <a class='table-anchor' href="{%url 'player_main' player.id %}">
+                    <div class="col center-block text-center player-photo">
+                        <img src="{{player.photo}}"><p class="fs-5 fw-light border-bottom pt-1">{{player.full_name}}</p>
+                    </div>
+                </a>
                 {% endfor %}
             </div>
             {% endfor %}

@@ -13,11 +13,11 @@ from .utils.statistics import count_intervals
 
 def index(request):
 
-    contex = {
+    context = {
 
     }
 
-    return render(request, "app/home.html", contex)
+    return render(request, "app/home.html", context)
 
 
 class TableView(View):
@@ -54,13 +54,13 @@ def team_main(request, team_id):
     for position in ["Goalkeeper", "Defender", "Midfielder", "Attacker"]:
         players[position] = Player.objects.filter(team__id=team_id, position=position)
 
-    contex = {
+    context = {
         "team": team,
         "players": players,
         "games": games
     }
 
-    return render(request, "app/team.html", contex)
+    return render(request, "app/team.html", context)
 
 
 def statistics(request):
@@ -77,7 +77,7 @@ def statistics(request):
     goals_45 = dict(count_intervals(goal_minutes, [45, 90]))
     goals_sum = sum(goals_45.values())
 
-    contex = {
+    context = {
         "scorers": scorers,
         "assists": assists,
         "canadian": canadian,
@@ -87,4 +87,16 @@ def statistics(request):
         "goals_per_game": round(len(goal_minutes) / all_games, 2)
     }
 
-    return render(request, "app/statistics.html", contex)
+    return render(request, "app/statistics.html", context)
+
+
+def player_main(request, player_id):
+
+    player = Player.objects.get(id=player_id)
+
+    context = {
+        "player": player
+    }
+
+    return render(request, "app/player.html", context)
+

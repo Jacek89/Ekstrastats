@@ -17,7 +17,7 @@
                     <tr><th>TOP SCORER</th><th>goals</th>
                     {% for player in scorers %}
                         <tr>
-                            <td>{{player.full_name}}</td>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
                             <td>{{player.goals_count}}</td>
                         </tr>
                     {% endfor %}
@@ -28,7 +28,7 @@
                     <tr><th>TOP ASSISTANT</th><th>assists</th>
                     {% for player in assists %}
                         <tr>
-                            <td>{{player.full_name}}</td>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
                             <td>{{player.assists_count}}</td>
                         </tr>
                     {% endfor %}
@@ -40,7 +40,7 @@
                     <tr><th>TOP COMBINED</th><th>goals + assists</th>
                     {% for player in canadian %}
                         <tr>
-                            <td>{{player.full_name}}</td>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
                             <td>{{player.canadian_count}}</td>
                         </tr>
                     {% endfor %}
