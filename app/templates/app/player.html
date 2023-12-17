@@ -2,6 +2,56 @@
 {% block content %}
 {% load static %}
 
-<h1>{{player.full_name}}</h1>
+<div>
+    <div class="team-top">
+        <img src="{{player.photo}}">
+        <h1 class="title pt-2">{{player.full_name}}</h1>
+    </div>
 
+    <div class="container-fluid">
+        <h3 class="title text-center bg-secondary bg-gradient py-1">PERSONAL INFO</h3>
+
+        <div class="row pt-1">
+            <div class="col-md-4 text-center">
+                <table class="table table-light">
+                    <tr>
+                        <th>First Name</th><td>{{player.first_name}}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Name</th><td>{{player.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <th>Nationality</th><td>{{player.nationality}}</td>
+                    </tr>
+                    <tr>
+                        <th>Team</th>
+                        <td>
+                            <a class='table-anchor' href="{%url 'team_main' player.team.id %}">
+                            <img class='table-logo' src="{{player.team.logo}}"> {{player.team.name}}
+                            </a>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="col-md-4 text-center border-end border-start">
+                <table class="table table-light">
+                    <tr>
+                        <th>Position</th><td>{{player.position}}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th><td>{{player.birth_date}} ({{player.age}})</td>
+                    </tr>
+                    <tr>
+                        <th>Height</th><td>{{player.height}} cm</td>
+                    </tr>
+                    <tr>
+                        <th>Weight</th><td>{{player.weight}} kg</td>
+                    </tr>
+
+                </table>
+            </div>
+
+    </div>
+</div>
 {% endblock content %}

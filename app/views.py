@@ -10,7 +10,6 @@ from Ekstrastats.settings.settings import SEASON
 from .utils.statistics import count_intervals
 
 
-
 def index(request):
 
     context = {
