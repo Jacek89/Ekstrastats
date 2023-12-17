@@ -8,6 +8,7 @@ from django.views import View
 from django.db.models import Count
 from Ekstrastats.settings.settings import SEASON
 from .utils.statistics import count_intervals
+from collections import defaultdict
 
 
 def index(request):
@@ -48,14 +49,17 @@ class TableView(View):
 
 def team_main(request, team_id):
     team = Team.objects.get(id=team_id)
-    players = {}
-    games = team.finished_games().order_by("-date")
-    for position in ["Goalkeeper", "Defender", "Midfielder", "Attacker"]:
-        players[position] = Player.objects.filter(team__id=team_id, position=position)
+    games = team.finished_games().select_related("team_home", "team_away").order_by("-date")
+
+    players = defaultdict(list)
+    players_query = Player.objects.filter(team__id=team_id).select_related("team")
+    for x in players_query:
+        players[x.position].append(x)
+    position_index = ["Goalkeeper", "Defender", "Midfielder", "Attacker"]
 
     context = {
         "team": team,
-        "players": players,
+        "players": dict(sorted(players.items(), key=lambda y: position_index.index(y[0]))),
         "games": games
     }
 
