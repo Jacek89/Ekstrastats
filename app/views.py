@@ -33,7 +33,7 @@ class TableView(View):
             if date_to is None and date_from is None:
                 if cache.get('table') is None:
                     tablek = TableCounter().tableJSON()
-                    cache.add("table", tablek, 600000)  # one week
+                    cache.add("table", tablek, 21600)  # 6 hours
                 else:
                     tablek = cache.get('table')
             else:
