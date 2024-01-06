@@ -1,6 +1,6 @@
 from datetime import datetime
 from app.models import Game, Team
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from collections import defaultdict
 from django.utils import timezone
 
@@ -32,7 +32,9 @@ class TableCounter:
         else:
             self.date_to = timezone.make_aware(datetime.strptime(date_to, '%Y-%m-%d'))
 
-        self.games = Game.objects.filter(Q(date__date__range=[self.date_from, self.date_to]) & ~Q(result="None-None"))
+        self.games = Game.objects.filter(
+            Q(date__date__range=[self.date_from, self.date_to]) & ~Q(result="None-None")
+        ).select_related("team_home", "team_away")
         self.table = {}
         self.__count_table()
 
@@ -230,7 +232,7 @@ class TableCounter:
                 mini_games = Game.objects.filter(
                     Q(date__date__range=[self.date_from, self.date_to]) & ~Q(result="None-None") &
                     Q(team_home__name__in=team) & Q(team_away__name__in=team)
-                )
+                ).select_related("team_home", "team_away")
                 # checks if all matches between the teams have been not played [n*(n-1)/2 * 2(match + rematch)]
                 if not len(mini_games) == len(team) * (len(team) - 1):
                     list_of_position = list_of_position + self.__set_position_entire(team)
