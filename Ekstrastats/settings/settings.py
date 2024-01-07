@@ -171,7 +171,8 @@ SECURE_HSTS_PRELOAD = True
 
 # Content Security Policy
 
-CSP_IMG_SRC = ("'self'", "media-3.api-sports.io", "media-2.api-sports.io", "media-1.api-sports.io", "media-4.api-sports.io")
+CSP_IMG_SRC = ("'self'", "media-3.api-sports.io", "media-2.api-sports.io", "media-1.api-sports.io",
+               "media-4.api-sports.io", "upload.wikimedia.org")
 CSP_STYLE_SRC = ("'self'", "fonts.googleapis.com", "cdn.jsdelivr.net")
 CSP_SCRIPT_SRC = ("'self'", "ajax.googleapis.com", "cdn.jsdelivr.net")
 CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com/")

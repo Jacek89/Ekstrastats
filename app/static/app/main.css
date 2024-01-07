@@ -102,6 +102,11 @@ font-family: Impact, sans-serif;
  padding: 20px;
 }
 
+.team-stadium-photo {
+  width: 500px;
+  max-height:260px;
+}
+
 .tab-hide {
   display: none;
 }

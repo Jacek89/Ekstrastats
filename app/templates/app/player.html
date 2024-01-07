@@ -15,21 +15,21 @@
             <div class="col-md-4 text-center">
                 <table class="table table-light">
                     <tr>
-                        <th>First Name</th><td>{{player.first_name}}</td>
+                        <td>First Name</td><th>{{player.first_name}}</th>
                     </tr>
                     <tr>
-                        <th>Last Name</th><td>{{player.last_name}}</td>
+                        <td>Last Name</td><th>{{player.last_name}}</th>
                     </tr>
                     <tr>
-                        <th>Nationality</th><td>{{player.nationality}}</td>
+                        <td>Nationality</td><th>{{player.nationality}}</th>
                     </tr>
                     <tr>
-                        <th>Team</th>
-                        <td>
+                        <td>Team</td>
+                        <th>
                             <a class='table-anchor' href="{%url 'team_main' player.team.id %}">
                             <img class='table-logo' src="{{player.team.logo}}"> {{player.team.name}}
                             </a>
-                        </td>
+                        </th>
                     </tr>
 
                 </table>
@@ -37,16 +37,16 @@
             <div class="col-md-4 text-center border-end border-start">
                 <table class="table table-light">
                     <tr>
-                        <th>Position</th><td>{{player.position}}</td>
+                        <td>Position</td><th>{{player.position}}</th>
                     </tr>
                     <tr>
-                        <th>Date of Birth</th><td>{{player.birth_date}} ({{player.age}})</td>
+                        <td>Date of Birth</td><th>{{player.birth_date}} ({{player.age}})</th>
                     </tr>
                     <tr>
-                        <th>Height</th><td>{{player.height}} cm</td>
+                        <td>Height</td><th>{{player.height}} cm</th>
                     </tr>
                     <tr>
-                        <th>Weight</th><td>{{player.weight}} kg</td>
+                        <td>Weight</td><th>{{player.weight}} kg</th>
                     </tr>
 
                 </table>

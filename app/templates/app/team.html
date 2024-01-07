@@ -15,7 +15,23 @@
 
 
     <div id="overview" class="tab-content tab-display">
-        Overview
+        <div class="row pt-1">
+            <div class="col-md-5">
+                <table class="table table-light">
+                    <tr><td>Name</td><th>{{ team.name }}</th></tr>
+                    <tr><td>Founded</td><th> {{ team.founded }}</th></tr>
+                    <tr><td>Official Website</td><th><a href="{{team.website}}">{{ team.website }}</a></th></tr>
+                    <tr><td>Stadium</td><th> {{ team.stadium }}</th></tr>
+                    <tr><td>Home City</td><th> {{team.city }}</th></tr>
+                    <tr><td>Capacity</td><th>{{ team.capacity }}</th></tr>
+                </table>
+            </div>
+            <div class="col-md-7 text-center">
+                <img class="team-stadium-photo" src="{{ team.stadium_photo }}">
+            </div>
+            <p class="ms-2 pb-1 border-bottom">History</p>
+            <div class="ms-2 mt-2">{{team.overview|safe}} </div>
+        </div>
     </div>
 
     <div id="squad" class="tab-content tab-hide">

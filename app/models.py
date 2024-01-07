@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.utils import timezone
 from Ekstrastats.settings.settings import SEASON
 
+
 class BaseModel(models.Model):
     id = models.AutoField(primary_key=True)
     updated = models.DateTimeField(auto_now=True)
@@ -26,10 +27,13 @@ class Team(BaseModel):
     name = models.CharField(max_length=200)
     logo = models.URLField(max_length=200)
     city = models.CharField(max_length=200)
-    ekstraklasa = models.BooleanField(default=False)
+    ekstraklasa = models.BooleanField(default=True)
     founded = models.IntegerField()
     stadium = models.CharField(max_length=200)
+    stadium_photo = models.URLField()
     capacity = models.IntegerField()
+    website = models.URLField(max_length=200)
+    overview = models.TextField(blank=True)
 
     class Meta:
         ordering = ['name']
