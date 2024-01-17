@@ -1,0 +1,138 @@
+{% extends "app/base.html" %}
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+<div>
+    <div class="team-top">
+        <img src="{{team.logo}}">
+        <h1 class="title pt-2">{{team.name}}</h1>
+    </div>
+
+    <div class="tab-bar mb-3">
+        <a class="a-clean" href="{% url 'team_main' team.id %}">
+            <button id="overBtn" class="tab-button">Overview</button>
+        </a>
+        <a class="a-clean" href="{% url 'team_main' team.id %}?tab=squad">
+             <button id="squadBtn" class="tab-button">Squad</button>
+        </a>
+        <a class="a-clean" href="{% url 'team_main' team.id %}?tab=results">
+            <button id="resultsBtn" class="tab-button">Results</button>
+        </a>
+        <a class="a-clean" href="{% url 'team_stats' team.id %}">
+            <button id="statsBtn" class="tab-button active">Statistics</button>
+        </a>
+    </div>
+
+</div>
+
+<div>
+    <h3 class="title text-center bg-secondary bg-gradient py-1">GENERAL STATS</h3>
+        <div class="row pt-1">
+            <div class="col-md-4 text-center">
+                <table class="table table-light">
+                    <tr>
+                        <td>Position in Table</td><th>{{tab.position}}</th>
+                    </tr>
+                    <tr>
+                        <td>Games Played</td><th>{{tab.total_matches}}</th>
+                    </tr>
+                    <tr>
+                        <td>Wins</td><th>{{tab.total_wins}} ({{tab.total_wins|percent:tab.total_matches}}%)</th>
+                    </tr>
+                    <tr>
+                        <td>Draws</td><th>{{tab.total_draws}} ({{tab.total_draws|percent:tab.total_matches}}%)</th>
+                    </tr>
+                    <tr>
+                        <td>Defeats</td><th>{{tab.total_loses}} ({{tab.total_loses|percent:tab.total_matches}}%)</th>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="col-md-4 text-center border-end border-start">
+                <table class="table table-light">
+                    <tr>
+                        <td>Points (per match)</td>
+                        <th>{{tab.total_points}} ({{tab.total_points|divide:tab.total_matches|floatformat:"2"}})</th>
+                    </tr>
+                    <tr>
+                        <td>Goals scored (per match)</td>
+                        <th>{{tab.total_goals}} ({{tab.total_goals|divide:tab.total_matches|floatformat:"2"}})</th>
+                    </tr>
+                    <tr>
+                        <td>Goals conceded (per match)</td>
+                        <th>{{tab.total_goals_lost}} ({{tab.total_goals_lost|divide:tab.total_matches|floatformat:"2"}})</th>
+                    </tr>
+                    <tr>
+                        <td>Goals difference</td><th>{{tab.total_goals|subtract:tab.total_goals_lost}}</th>
+                    </tr>
+
+                </table>
+            </div>
+                <div class="col-md-4 text-center border-start">
+                <table class="table table-light">
+                    <tr>
+                        <td>Over 2.5 goals</td>
+                        <th>{{over25}} ({{over25|percent:tab.total_matches}}%)</th>
+                    </tr>
+                    <tr>
+                        <td>Under 2.5 goals</td>
+                        <th>{{tab.total_matches|subtract:over25}}
+                            ({{tab.total_matches|subtract:over25|percent:tab.total_matches}}%)</th>
+                    </tr>
+                    <tr>
+                        <td>Clean sheets</td>
+                        <th>{{clean_sheets}} ({{clean_sheets|percent:tab.total_matches}}%)</th>
+                    </tr>
+                    <tr>
+                        <td>Failed to score</td>
+                        <th>{{failed_to_score}} ({{failed_to_score|percent:tab.total_matches}}%)</th>
+                    </tr>
+
+                </table>
+
+            </div>
+        </div>
+</div>
+
+<div>
+    <h3 class="title text-center bg-secondary bg-gradient py-1">KEY PLAYERS</h3>
+        <div class="row pt-1">
+            <div class="col-md-4 text-center">
+                <table class="table table-light">
+                    <tr><th>TOP SCORER</th><th>goals</th>
+                    {% for player in scorers %}
+                        <tr>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                            <td>{{player.goals_count}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-md-4 text-center border-end border-start">
+                <table class="table table-light">
+                    <tr><th>TOP ASSISTANT</th><th>assists</th>
+                    {% for player in assistants %}
+                        <tr>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                            <td>{{player.assists_count}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-md-4 text-center">
+
+                 <table class="table table-light">
+                    <tr><th>TOP COMBINED</th><th>goals + assists</th>
+                    {% for player in canadian %}
+                        <tr>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                            <td>{{player.canadian_count}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+        </div>
+</div>
+{% endblock content %}

@@ -1,5 +1,6 @@
 {% extends "app/base.html" %}
 {% block content %}
+{% load static %}
 <div>
     <div class="team-top">
         <img src="{{team.logo}}">
@@ -7,14 +8,16 @@
     </div>
 
     <div class="tab-bar mb-3">
-      <button id="overBtn" class="tab-button active">Overview</button>
+      <button id="overviewBtn" class="tab-button">Overview</button>
       <button id="squadBtn" class="tab-button">Squad</button>
       <button id="resultsBtn" class="tab-button">Results</button>
-      <button id="statsBtn" class="tab-button">Statistics</button>
+      <a class="a-clean" href="{% url 'team_stats' team.id %}">
+          <button id="statsBtn" class="tab-button">Statistics</button>
+      </a>
     </div>
 
 
-    <div id="overview" class="tab-content tab-display">
+    <div id="overview" class="tab-content tab-hide">
         <div class="row pt-1">
             <div class="col-md-5">
                 <table class="table table-light">
@@ -67,10 +70,6 @@
         {% endif %}
     </div>
 
-    <div class="tab-content tab-hide" id="statistics">
-        STATISTICS
-    </div>
-
 </div>
 
 <script nonce="{{request.csp_nonce}}">
@@ -96,13 +95,13 @@ $( "#resultsBtn" ).on( "click", function(event) {
   openTab(event, 'results');
 } );
 
-$( "#overBtn" ).on( "click", function(event) {
+$( "#overviewBtn" ).on( "click", function(event) {
   openTab(event, 'overview');
 } );
 
-$( "#statsBtn" ).on( "click", function(event) {
-  openTab(event, 'statistics');
-} );
+$(document).ready(function(){
+  document.getElementById("{{tab}}"+"Btn").click();
+});
 
 </script>
 

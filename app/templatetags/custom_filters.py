@@ -18,3 +18,8 @@ def percent(value, arg):
     except (ValueError, ZeroDivisionError):
         return None
 
+
+@register.filter
+def subtract(value, arg):
+    return value - arg
+

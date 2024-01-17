@@ -126,6 +126,10 @@ font-family: Impact, sans-serif;
   font-size: 17px;
 }
 
+.a-clean-anchor {
+  text-decoration: none;
+}
+
 .tab-bar {
  overflow: hidden;
  border-bottom: 1px solid #ccc;

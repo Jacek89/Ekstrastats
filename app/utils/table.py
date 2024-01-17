@@ -1,11 +1,25 @@
 from datetime import datetime
 from app.models import Game, Team
-from django.db.models import Q, Prefetch
+from django.db.models import Q
 from collections import defaultdict
 from django.utils import timezone
+from django.core.cache import cache
 
 TEAMS_IN_TABLE = 18
 SEASON = 2023
+
+
+def table(date_to=None, date_from=None):
+    if not date_to and not date_from:
+        if cache.get('table') is None:
+            tablek = TableCounter().tableJSON()
+            cache.add("table", tablek, 21600)  # 6 hours
+        else:
+            tablek = cache.get('table')
+    else:
+        tablek = TableCounter(date_from=date_from, date_to=date_to).tableJSON()
+
+    return tablek
 
 
 class TableCounter:

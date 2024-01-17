@@ -1,18 +1,16 @@
 from django.shortcuts import render
 from .models import Team, Player, Game, Goal
-from .utils.table import TableCounter
+from .utils.table import table
 from django.http import JsonResponse
 from .forms import TableDate
-from django.core.cache import cache
 from django.views import View
-from django.db.models import Count
+from django.db.models import Count, Q
 from Ekstrastats.settings.settings import SEASON
 from .utils.statistics import count_intervals
 from collections import defaultdict
 
 
 def index(request):
-
     context = {
 
     }
@@ -30,17 +28,8 @@ class TableView(View):
             date_to = request.GET.get('date_to')
             date_from = request.GET.get('date_from')
 
-            if date_to is None and date_from is None:
-                if cache.get('table') is None:
-                    tablek = TableCounter().tableJSON()
-                    cache.add("table", tablek, 21600)  # 6 hours
-                else:
-                    tablek = cache.get('table')
-            else:
-                tablek = TableCounter(date_from=date_from, date_to=date_to).tableJSON()
-
             response = {
-                "data": tablek
+                "data": table(date_from=date_from, date_to=date_to)
             }
             return JsonResponse(response)
 
@@ -58,6 +47,7 @@ def team_main(request, team_id):
     position_index = ["Goalkeeper", "Defender", "Midfielder", "Attacker"]
 
     context = {
+        "tab": request.GET.get('tab') if request.GET.get('tab') is not None else 'overview',
         "team": team,
         "players": dict(sorted(players.items(), key=lambda y: position_index.index(y[0]))),
         "games": games
@@ -66,13 +56,45 @@ def team_main(request, team_id):
     return render(request, "app/team.html", context)
 
 
-def statistics(request):
+def team_stats(request, team_id):
+    team = Team.objects.get(id=team_id)
+    players_query = Player.objects.filter(team__id=team_id).select_related("team")
 
+    scorers = players_query.annotate(goals_count=Count('player_goals')).order_by('-goals_count')[:5]
+    assistants = players_query.annotate(assists_count=Count('player_assists')).order_by('-assists_count')[:5]
+    canadian = players_query.annotate(
+        canadian_count=Count('player_goals', distinct=True) + Count('player_assists', distinct=True)
+    ).order_by('-canadian_count')[:5]
+
+    over25 = Game.objects.filter(Q(team_away_id=team_id) | Q(team_home_id=team_id)).annotate(
+        total_goals=Count('game_goals__id')).filter(total_goals__gt=2).count()
+
+    clean_sheets = team.finished_games().exclude(Q(team_away_id=team_id, game_goals__team_against_id=team_id) |
+                                                 Q(team_home_id=team_id, game_goals__team_against_id=team_id)).count()
+
+    failed_to_score = team.finished_games().exclude(Q(team_away_id=team_id, game_goals__team_scored_id=team_id) |
+                                                    Q(team_home_id=team_id, game_goals__team_scored_id=team_id)).count()
+
+    context = {
+        'failed_to_score': failed_to_score,
+        'clean_sheets': clean_sheets,
+        'over25': over25,
+        'tab': next(i[team.name] for i in table() if team.name in i),
+        'team': team,
+        'scorers': scorers,
+        'assistants': assistants,
+        'canadian': canadian
+    }
+
+    return render(request, "app/team_stats.html", context)
+
+
+def statistics(request):
     scorers = Player.objects.annotate(goals_count=Count('player_goals')).order_by('-goals_count')[:5]
     assists = Player.objects.annotate(assists_count=Count('player_assists')).order_by('-assists_count')[:5]
     canadian = Player.objects.annotate(
         canadian_count=Count('player_goals', distinct=True) + Count('player_assists', distinct=True)
-                                       ).order_by('-canadian_count')[:5]
+    ).order_by('-canadian_count')[:5]
 
     goal_minutes = Goal.objects.filter(game__season=SEASON).values_list('minute', flat=True)
     all_games = Game.objects.filter(season=SEASON).count()
@@ -94,7 +116,6 @@ def statistics(request):
 
 
 def player_main(request, player_id):
-
     player = Player.objects.get(id=player_id)
 
     context = {
@@ -102,4 +123,3 @@ def player_main(request, player_id):
     }
 
     return render(request, "app/player.html", context)
-
