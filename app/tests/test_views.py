@@ -10,16 +10,16 @@ class TestViewIndex(TestCase):
         self.client = Client()
 
     def test_view_url_accessible_by_name(self):
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
 
     def test_view_uses_correct_template(self):
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/home.html')
 
     def test_view_context_processor_teams_amount(self):
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('home'))
         self.assertEqual(len(response.context['teams_extra']), 3)
 
 

@@ -4,15 +4,23 @@ from .utils.table import table
 from django.http import JsonResponse
 from .forms import TableDate
 from django.views import View
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Min, Max
 from Ekstrastats.settings.settings import SEASON
 from .utils.statistics import count_intervals
 from collections import defaultdict
 
 
 def index(request):
-    context = {
 
+    rounds = Game.objects.values('round').annotate(
+        num_games=Count('id', distinct=True),
+        num_goals=Count('game_goals', distinct=True),
+        first_game_date=Min('date'),
+        last_game_date=Max('date')
+    ).order_by('-round')
+
+    context = {
+        'rounds': rounds
     }
 
     return render(request, "app/home.html", context)

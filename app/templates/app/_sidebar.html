@@ -1,0 +1,73 @@
+{% load static %}
+
+<div id="loading">
+  <img id="loading-gif" src="{% static 'app/loading.gif' %}" alt="loading">
+  <p id="loading-text">Table is calculating. Please wait.</p>
+</div>
+
+<div id="success" class="sidebar-content">
+
+</div>
+
+
+<script nonce="{{request.csp_nonce}}">
+
+var create_table = function(data){
+  let html = ("<table id='table' class='table table-hover'><thead class='thead-light'><tr><th>Pos</th><th>Team</th><th>M</th><th>P</th></tr></thead>");
+  for (let i = 0; i < 18; i++) {
+    for (const [key, value] of Object.entries(data.data[i])) {
+      if (value.position == 1) {
+        html +=("<tr class='table-success'>");
+      } else if (value.position == 2 || value.position == 3) {
+        html +=("<tr class='table-active'>");
+       } else if (value.position > 15) {
+        html +=("<tr class='table-danger'>");
+      } else {
+        html +=("<tr>");
+      }
+      html +=("<td>" +value.position+ "</td>");
+      var url ="{% url 'team_main' 1234 %}".replace(/1234/, value.team_id.toString());
+      html +=("<td><a class='table-anchor' href='"+url+"'><img class='table-logo me-2' src='"+value.logo+"'>" +key+ "</a></td>");
+      html +=("<td>" +value.total_matches+ "</td>");
+      html +=("<td class='fw-bold'>" +value.total_points+ "</td>");
+      html +=("</tr>");
+    }
+  }
+  html += "</table>"
+  $('#success').html(html);
+}
+
+var replace_data = function(data){
+        $('#success').show();
+        $('#loading').hide();
+        create_table(data);
+}
+
+$(document).ready(function(){
+  $("#success").hide();
+  $.ajax({
+    url: '{% url "table" %}',
+    success: function(data){
+    replace_data(data);
+    }
+  });
+});
+
+$(function() {
+  $('#table-form').on('submit', function(event) {
+    event.preventDefault();
+    $("#success").hide();
+    $('#loading').show();
+    $.ajax({
+      url: '{% url "table" %}',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function(data){
+      replace_data(data);
+      }
+    });
+  });
+});
+
+
+</script>

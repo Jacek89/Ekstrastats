@@ -1,8 +1,36 @@
 {% extends "app/base.html" %}
 {% block content %}
+{% load static %}
+{% load custom_filters %}
 
-{% for team in teams_extra %}
-    <h1>{{team.name}}</h1>
-{% endfor %}
+<div class="row">
+    <div class="col-md-8 pt-3">
+        {% for round in rounds %}
+        <div class="row border p-2 my-2 me-2">
+            <div class="col-md-3">
+                <a class="round-logo" href="">
+                    <div class="round-logo2">{{round.round}}</div>
+                </a>
+            </div>
+            <div class="col-md-9">
+                <a href="">
+                    <h3 class="">
+                          Summary of the {{round.round|ordinal}} round of Ekstraklasa
+                    </h3>
+                    <p class=" py-1">
+                        {{round.num_games}} of 9 matches of the {{round.round|ordinal}} round have been played so far.
+                        The round began on {{round.first_game_date}} and ended on {{round.last_game_date}}.
+                        Players scored a total of {{round.num_goals}} goals.
+                    </p>
+                </a>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-4">
+        {% include 'app/_sidebar.html' %}
+    </div>
+</div>
 
 {% endblock content %}

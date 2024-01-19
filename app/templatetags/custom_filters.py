@@ -23,3 +23,11 @@ def percent(value, arg):
 def subtract(value, arg):
     return value - arg
 
+
+@register.filter
+def ordinal(n: int):
+    if 11 <= (n % 100) <= 13:
+        suffix = 'th'
+    else:
+        suffix = ['th', 'st', 'nd', 'rd', 'th'][min(n % 10, 4)]
+    return str(n) + suffix
