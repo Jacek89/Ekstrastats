@@ -4,14 +4,13 @@ from .utils.table import table
 from django.http import JsonResponse
 from .forms import TableDate
 from django.views import View
-from django.db.models import Count, Q, Min, Max
+from django.db.models import Count, Q, Min, Max, F, Prefetch
 from Ekstrastats.settings.settings import SEASON
-from .utils.statistics import count_intervals
+from .utils.statistics import count_intervals, count_score_stats
 from collections import defaultdict
 
 
 def index(request):
-
     rounds = Game.objects.values('round').annotate(
         num_games=Count('id', distinct=True),
         num_goals=Count('game_goals', distinct=True),
@@ -131,3 +130,46 @@ def player_main(request, player_id):
     }
 
     return render(request, "app/player.html", context)
+
+
+def round_summary(request, round_num):
+
+    games = Game.objects.filter(round=round_num).select_related("team_home", "team_away").prefetch_related(
+        Prefetch("game_goals", queryset=Goal.objects.select_related("scorer", "team_scored", "own_goal_scorer"))
+    ).order_by("date")
+
+    num_games = len(games)
+
+    stats = games.annotate(
+        total_goals=Count('game_goals__id'),
+        first_goal_minute=Min('game_goals__minute')
+    ).aggregate(
+        total_goals=Count('game_goals__id'),
+        first_goal_minute=Min('game_goals__minute')
+    )
+
+    players_stats = Player.objects.annotate(
+        goals=Count('player_goals__id', filter=Q(player_goals__game__round=round_num), distinct=True),
+        assists=Count('player_assists__id', filter=Q(player_assists__game__round=round_num), distinct=True),
+    ).annotate(
+        combined_goals_assists=F('goals') + F('assists')
+    ).filter(combined_goals_assists__gt=1).order_by('-combined_goals_assists', '-goals', '-assists', 'last_name')
+
+    own_goals = Player.objects.annotate(own_goals=Count(
+            'player_own_goals__id', filter=Q(player_own_goals__game__round=round_num), distinct=True
+            )).filter(own_goals__gt=0).select_related('team')
+
+    context = {
+        'round_num': round_num,
+        'num_games': num_games,
+        'games': games,
+        'total_goals': stats['total_goals'],
+        'goals_per_game': round(stats['total_goals'] / num_games, 2),
+        'first_goal_minute': stats['first_goal_minute'],
+        'players_stats': players_stats,
+        'own_goals': own_goals,
+        'score_stats': count_score_stats(games)
+    }
+
+    return render(request, 'app/round.html', context)
+

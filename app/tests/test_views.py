@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .factories import TeamModelFactory, GameModelFactory
+from .factories import TeamModelFactory, GameModelFactory, GoalModelFactory
 from django.core.cache import cache
 
 
@@ -104,3 +104,35 @@ class TestViewTeamStats(TestCase):
 
     def tearDown(self):
         cache.delete('table')
+
+
+class TestViewRoundSummary(TestCase):
+    def setUp(self):
+        games = GameModelFactory.create_batch(9, round=1)
+        GoalModelFactory.create_batch(2, game=games[0])
+        self.client = Client()
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('round', args=(1,)))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        response = self.client.get(reverse('round', args=(1,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/round.html')
+
+    def test_view_context_round_num(self):
+        response = self.client.get(reverse('round', args=(1,)))
+        self.assertEqual(response.context["round_num"], 1)
+
+    def test_view_context_game_played(self):
+        response = self.client.get(reverse('round', args=(1,)))
+        self.assertEqual(response.context["num_games"], 9)
+
+    def test_view_context_total_goals(self):
+        response = self.client.get(reverse('round', args=(1,)))
+        self.assertEqual(response.context["total_goals"], 2)
+
+    def test_view_context_goals_per_game(self):
+        response = self.client.get(reverse('round', args=(1,)))
+        self.assertAlmostEqual(response.context["goals_per_game"], 0.22)
