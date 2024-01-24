@@ -1,19 +1,24 @@
-# Ekstrastats
-Web application presenting polish ekstraklasa statistics. The motivation for creating this application is educational reason. 
-The main idea of this application is to visualize as complex as possible statistics using calculations based on as minimalistic as possible database. 
+# Ekstrastats - Polish Ekstraklasa Statistics Web App
+This web application is driven by an educational motive, centering on the statistics of the Polish Ekstraklasa. The fundamental idea is to visualize the most complex statistics possible through calculations based on an intentionally minimalistic database structure. This approach aims to demonstrate the effectiveness of extracting and presenting comprehensive insights with minimal data complexity.
 
-<a href="http://ekstrastats.onrender.com/">Link to deployed web app</a>
+
+<a href="http://ekstrastats.onrender.com/">Link to deployed web app</a> (Can take a very long time to load for the first time)
 
 ## Additional Goals:
-### Security
-During the development of the application, I became interested in the topic. I learned about the ways in which hackers can break security of application or its users (XSS, SQL Injection) and basics about how to counteract it.
-I implemented many of the recommendations from <a href="https://observatory.mozilla.org/">Mozilla Observatory</a> getting an A+ score after a scan through the tool.
+### Enhancing Security
+Throughout the application's development, my interest led me to explore the realm of security. I familiarized myself with potential vulnerabilities that hackers might exploit, such as XSS and SQL Injection, and learned essential countermeasures. Implementing numerous recommendations from <a href="https://observatory.mozilla.org/">Mozilla Observatory</a>, I subjected the application to thorough scans using the tool, achieving an outstanding A+ score. This proactive approach ensures robust security against potential threats.
 
 ![Mozilla Observatory Score](https://i.imgur.com/zfBzyp2.png)
 
 
-### Optimization
-Another stated goal is to optimize the application so that the loading time of individual pages is short by reducing calls to the database. 
-To achieve this I had to delve into the topic of how to make correct queries in Django ORM, also using non-standard solutions. I use Django Debug Toolbar To monitor loading speed and number of database queries. Before implementing the optimization, when calculating the table, the program hit the database more than 400 times. I was able to go down to 22, this resulted in reducing the loading time by 5 times. 
+### Optimizing Performance
+Another key objective is to optimize the application, aiming for short loading times of individual pages by minimizing database calls. To accomplish this, I delved into the intricacies of crafting efficient queries in Django ORM, exploring non-standard solutions when necessary. The use of Django Debug Toolbar became instrumental in monitoring both loading speed and the number of database queries.
+
+Prior to the optimization efforts, the program made over 400 database hits when calculating the table. Through adjustments, I managed to bring this number down to 6, resulting in a remarkable fivefold reduction in loading time.
+
+### Testing for Reliability
+
+One of the key objectives in the development is comprehensive testing of web application. I aspire to verify every functionality and as many as possible statistical features. To achieve this, I use meticulously crafted models from the Factories library that perfectly represent real-world scenarios. This approach makes it much faster to introduce new functionality without worrying about the proper operation of previous ones. 
 
 ## Features
+
