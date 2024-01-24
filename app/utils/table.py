@@ -268,12 +268,15 @@ class TableCounter:
         Returns JSON format of table: list is ordered by position
         """
         ret = []
+
+        teams_data_query = Team.objects.filter(ekstraklasa=True).only('name', 'logo')
+        teams_data = {i.name: {'id': i.id, 'logo': i.logo} for i in teams_data_query}
+
         for k, v in self.table.items():
             ret.append({k: v})
             ret[-1][k]["position"] = list(self.table.keys()).index(k)+1
-            team = Team.objects.get(name=k)
-            ret[-1][k]["team_id"] = team.id
-            ret[-1][k]["logo"] = team.logo
+            ret[-1][k]["team_id"] = teams_data[k]['id']
+            ret[-1][k]["logo"] = teams_data[k]['logo']
 
         return ret
 
