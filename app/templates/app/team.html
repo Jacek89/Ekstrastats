@@ -58,9 +58,29 @@
             {% for game in games %}
             <tr>
                 <td class="table-dark">{{game.date|date:"j N"}}<br>{{game.date|date:"H:i"}}</td>
-                <td class="text-end fs-5">{{game.team_home}} <img class='table-logo' src="{{game.team_home.logo}}"></td>
-                <td class="text-center fs-4">{{game.result}}</td>
-                <td class="text-start fs-5"><img class='table-logo' src="{{game.team_away.logo}}"> {{game.team_away}}</td>
+                 <td class="text-end fs-6">
+                        {{game.team_home}} <img class='table-logo' src="{{game.team_home.logo}}">
+                        {% for goal in game.game_goals.all %}
+                        {% if goal.team_scored == game.team_home %}
+                        <p class="my-0 fw-light"><small>{{goal.scorer.full_name}}{{goal.own_goal_scorer.full_name}}
+                            {{goal.minute}}{% if goal.minute_extra %}+{{goal.minute_extra}}{%endif%}'
+                            {% if goal.own_goal %} (og.){% elif goal.penalty %} (p){% endif %}
+                        </small></p>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                 <td class="text-center fs-5">{{game.result}}<br><p class="fw-light fs-6">({{game.halftime}})</p></td>
+                 <td class="text-start fs-6">
+                     <img class='table-logo' src="{{game.team_away.logo}}"> {{game.team_away}}
+                                                {% for goal in game.game_goals.all %}
+                     {% if goal.team_scored == game.team_away %}
+                     <p class="my-0 fw-light"><small>{{goal.scorer.full_name}}{{goal.own_goal_scorer.full_name}}
+                            {{goal.minute}}{% if goal.minute_extra %}+{{goal.minute_extra}}{%endif%}'
+                            {% if goal.own_goal %} (og.){% elif goal.penalty %} (p){% endif %}
+                     </small></p>
+                     {% endif %}
+                     {% endfor %}
+                 </td>
             </tr>
             {% endfor %}
         </table>

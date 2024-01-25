@@ -43,10 +43,10 @@
                         <td>Date of Birth</td><th>{{player.birth_date}} ({{player.age}})</th>
                     </tr>
                     <tr>
-                        <td>Height</td><th>{{player.height}} cm</th>
+                        <td>Height</td><th>{%if player.height %} {{player.height}} cm {% else %} - {% endif %}</th>
                     </tr>
                     <tr>
-                        <td>Weight</td><th>{{player.weight}} kg</th>
+                        <td>Weight</td><th>{%if player.weight %} {{player.weight}} kg  {% else %} - {% endif %}</th>
                     </tr>
 
                 </table>

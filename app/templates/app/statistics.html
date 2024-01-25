@@ -14,10 +14,11 @@
         <div class="row pt-1">
             <div class="col-md-4 text-center">
                 <table class="table table-light">
-                    <tr><th>TOP SCORER</th><th>goals</th>
+                    <tr><th>TOP SCORER</th><th>goals</th></tr>
                     {% for player in scorers %}
                         <tr>
-                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a>
+                             <img class='table-logo ms-2' src="{{player.team.logo}}"></td>
                             <td>{{player.goals_count}}</td>
                         </tr>
                     {% endfor %}
@@ -25,10 +26,11 @@
             </div>
             <div class="col-md-4 text-center border-end border-start">
                 <table class="table table-light">
-                    <tr><th>TOP ASSISTANT</th><th>assists</th>
+                    <tr><th>TOP ASSISTANT</th><th>assists</th></tr>
                     {% for player in assists %}
                         <tr>
-                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a>
+                            <img class='table-logo ms-2' src="{{player.team.logo}}"></td>
                             <td>{{player.assists_count}}</td>
                         </tr>
                     {% endfor %}
@@ -37,10 +39,11 @@
             <div class="col-md-4 text-center">
 
                  <table class="table table-light">
-                    <tr><th>TOP COMBINED</th><th>goals + assists</th>
+                     <tr><th>TOP COMBINED</th><th>goals + assists</th></tr>
                     {% for player in canadian %}
                         <tr>
-                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                            <td><a class='table-anchor' href="{%url 'player_main' player.id %}">{{player.full_name}}</a>
+                            <img class='table-logo ms-2' src="{{player.team.logo}}"></td>
                             <td>{{player.canadian_count}}</td>
                         </tr>
                     {% endfor %}
@@ -53,7 +56,7 @@
             <div class="row pt-1">
                 <div class="col-md-4 text-center">
                     <table class="table table-light">
-                        <tr><th>GOALS PER GAME</th>
+                        <tr><th>GOALS PER GAME</th><th></th></tr>
                             <tr>
                                 <td>Full Season</td>
                                 <td>{{goals_per_game}}</td>
@@ -63,7 +66,7 @@
                 </div>
                 <div class="col-md-4 text-center border-end border-start">
                     <table class="table table-light">
-                        <tr><th>Goals by 15-min. segment</th>
+                        <tr><th>Goals by 15-min. segment</th><th></th><th></th></tr>
                         {% for interval, count in goals_15.items|dictsort:0 %}
                             <tr>
                                 <td>{{interval|add:"-14"}} - {{interval}}</td>
@@ -76,7 +79,7 @@
                 <div class="col-md-4 text-center">
 
                      <table class="table table-light">
-                         <tr><th>Goals by Half</th></tr>
+                         <tr><th>Goals by Half</th><th></th><th></th></tr>
                          <tr>
                              <td>1st Half</td><td>{{goals_45.45}}</td><td>({{goals_45.45|percent:goals_sum}}%)</td>
                          </tr>

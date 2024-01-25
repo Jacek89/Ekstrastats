@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from .models import Team, Player, Game, Goal
 from .utils.table import table
+from .utils.statistics import count_intervals, count_score_stats
+from .utils.general import summary_post
 from django.http import JsonResponse
 from .forms import TableDate
 from django.views import View
 from django.db.models import Count, Q, Min, Max, F, Prefetch
 from Ekstrastats.settings.settings import SEASON
-from .utils.statistics import count_intervals, count_score_stats
+
 from collections import defaultdict
 
 
@@ -45,7 +47,9 @@ class TableView(View):
 
 def team_main(request, team_id):
     team = Team.objects.get(id=team_id)
-    games = team.finished_games().select_related("team_home", "team_away").order_by("-date")
+    games = team.finished_games().select_related("team_home", "team_away").prefetch_related(
+        Prefetch("game_goals", queryset=Goal.objects.select_related("scorer", "team_scored", "own_goal_scorer"))
+    ).order_by("-date")
 
     players = defaultdict(list)
     players_query = Player.objects.filter(team__id=team_id).select_related("team")
@@ -97,11 +101,13 @@ def team_stats(request, team_id):
 
 
 def statistics(request):
-    scorers = Player.objects.annotate(goals_count=Count('player_goals')).order_by('-goals_count')[:5]
-    assists = Player.objects.annotate(assists_count=Count('player_assists')).order_by('-assists_count')[:5]
+    scorers = Player.objects.annotate(goals_count=Count('player_goals')
+                                      ).select_related("team").order_by('-goals_count', 'last_name')[:5]
+    assists = Player.objects.annotate(assists_count=Count('player_assists')
+                                      ).select_related("team").order_by('-assists_count', 'last_name')[:5]
     canadian = Player.objects.annotate(
         canadian_count=Count('player_goals', distinct=True) + Count('player_assists', distinct=True)
-    ).order_by('-canadian_count')[:5]
+    ).select_related("team").order_by('-canadian_count', 'last_name')[:5]
 
     goal_minutes = Goal.objects.filter(game__season=SEASON).values_list('minute', flat=True)
     all_games = Game.objects.filter(season=SEASON).count()
@@ -138,8 +144,6 @@ def round_summary(request, round_num):
         Prefetch("game_goals", queryset=Goal.objects.select_related("scorer", "team_scored", "own_goal_scorer"))
     ).order_by("date")
 
-    num_games = len(games)
-
     stats = games.annotate(
         total_goals=Count('game_goals__id'),
         first_goal_minute=Min('game_goals__minute')
@@ -147,6 +151,10 @@ def round_summary(request, round_num):
         total_goals=Count('game_goals__id'),
         first_goal_minute=Min('game_goals__minute')
     )
+
+    num_games = len(games)
+    goals_per_game = round(stats['total_goals'] / num_games, 2)
+    score_stats = count_score_stats(games)
 
     players_stats = Player.objects.annotate(
         goals=Count('player_goals__id', filter=Q(player_goals__game__round=round_num), distinct=True),
@@ -164,11 +172,13 @@ def round_summary(request, round_num):
         'num_games': num_games,
         'games': games,
         'total_goals': stats['total_goals'],
-        'goals_per_game': round(stats['total_goals'] / num_games, 2),
+        'goals_per_game': goals_per_game,
         'first_goal_minute': stats['first_goal_minute'],
         'players_stats': players_stats,
         'own_goals': own_goals,
-        'score_stats': count_score_stats(games)
+        'score_stats': score_stats,
+        'summary_post': summary_post(round_num=round_num, num_games=num_games, goals=stats['total_goals'],
+                                     gpm=goals_per_game, score_stats=score_stats, own_goals=own_goals)
     }
 
     return render(request, 'app/round.html', context)

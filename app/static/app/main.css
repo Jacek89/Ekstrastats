@@ -23,6 +23,11 @@ body {
   box-sizing: border-box;
 }
 
+.justify {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
 .bg-navbar {
   font-weight:bold;
   background-image: linear-gradient(DarkBlue, Indigo);

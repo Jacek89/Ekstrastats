@@ -6,21 +6,9 @@
 <div class="row">
     <div class="col-md-8 pt-3">
         <div class="ps-3">
-            <h1>
-                Summary of the {{round_num|ordinal}} round of Ekstraklasa.
-            </h1>
-            <h4 class="text-bold pt-3">
-                The {{round_num|ordinal}} round of the Ekstraklasa has concluded with
-                {% if games|length == 9 %}
-                all nine matches
-                {% else %}
-                {{games|length}} of nine matches
-                {% endif %}
-                delivering a
-                spectacle of football that left fans on the edge of their seats. From nail-biting encounters to goal
-                fests, this round had it all.
-            </h4>
-            <div class="pt-2">
+            <h1>{{summary_post.title}}</h1>
+            <h4 class="text-bold pt-3 justify">{{summary_post.subtitle}}</h4>
+            <div class="pt-4">
                 <table class="table table-light table-results">
                 {% for game in games %}
                 <tr>
@@ -29,19 +17,19 @@
                         {{game.team_home}} <img class='table-logo' src="{{game.team_home.logo}}">
                         {% for goal in game.game_goals.all %}
                         {% if goal.team_scored == game.team_home %}
-                        <p class="my-0 text-muted"><small>{{goal.scorer.full_name}}{{goal.own_goal_scorer.full_name}}
+                        <p class="my-0 fw-light"><small>{{goal.scorer.full_name}}{{goal.own_goal_scorer.full_name}}
                             {{goal.minute}}{% if goal.minute_extra %}+{{goal.minute_extra}}{%endif%}'
                             {% if goal.own_goal %} (og.){% elif goal.penalty %} (p){% endif %}
                         </small></p>
                         {% endif %}
                         {% endfor %}
                     </td>
-                    <td class="text-center fs-5">{{game.result}}</td>
+                    <td class="text-center fs-5">{{game.result}}<br><p class="fw-light fs-6">({{game.halftime}})</p></td>
                     <td class="text-start fs-6">
                         <img class='table-logo' src="{{game.team_away.logo}}"> {{game.team_away}}
                                                 {% for goal in game.game_goals.all %}
                         {% if goal.team_scored == game.team_away %}
-                        <p class="my-0 text-muted"><small>{{goal.scorer.full_name}}{{goal.own_goal_scorer.full_name}}
+                        <p class="my-0 fw-light"><small>{{goal.scorer.full_name}}{{goal.own_goal_scorer.full_name}}
                             {{goal.minute}}{% if goal.minute_extra %}+{{goal.minute_extra}}{%endif%}'
                             {% if goal.own_goal %} (og.){% elif goal.penalty %} (p){% endif %}
                         </small></p>
@@ -53,24 +41,8 @@
                 {% endfor %}
                 </table>
             </div>
-            <div>
-                In summary, the latest round of the Ekstraklasa treated fans to an array of captivating matches,
-                producing a total of {{total_goals}} goals. From high-scoring encounters to tightly contested
-                draws, the league continues to showcase the competitive spirit of Polish football. As teams look ahead
-                to the next fixtures, the race for the top spot intensifies, promising more excitement for fans
-                in the upcoming matches.
-
-                {% if own_goals|length == 1 %}
-                <br><br>However, the round saw an unexpected twist as {{own_goals.0.full_name}} of
-                {{own_goals.0.team.name}} scored an own goal. The question now lingers: will this incident negatively
-                impact {{own_goals.0.team.name}}'s position in the table, or will it remain without
-                significant consequences?
-                {% elif own_goals|length > 1 %}
-                <br><br>However, the round saw an unexpected twist as {% for og in own_goals %}{{og.full_name}} of
-                {{og.team.name}}, {% endfor %}scored an own goal. The question now lingers: will this incident
-                negatively impact team's position in the table, or will it remain without
-                significant consequences?
-                {% endif %}
+            <div class="pt-2 justify">
+                {{ summary_post.body|safe }}
             </div>
 
         </div>
