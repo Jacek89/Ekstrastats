@@ -6,6 +6,7 @@ from ..models import Game
 
 def count_intervals(sequence, intervals):
     count = defaultdict(int)
+    count[15], count[30], count[45], count[60], count[75], count[90] = 0, 0, 0, 0, 0, 0
     intervals.sort()
     for item in sequence:
         pos = bisect_left(intervals, item)
