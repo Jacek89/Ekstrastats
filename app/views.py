@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Team, Player, Game, Goal
 from .utils.table import table
 from .utils.statistics import count_intervals, count_score_stats
-from .utils.general import summary_post
+from .utils.general import summary_post, flag
 from django.http import JsonResponse
 from .forms import TableDate
 from django.views import View
@@ -130,9 +130,11 @@ def statistics(request):
 
 def player_main(request, player_id):
     player = Player.objects.get(id=player_id)
+    flag_iso = flag(player.nationality)
 
     context = {
-        "player": player
+        "player": player,
+        'flag': flag_iso
     }
 
     return render(request, "app/player.html", context)

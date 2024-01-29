@@ -186,6 +186,11 @@ body {
   transform: scale(1.05);
  }
 
+.flag {
+  width: 30px;
+  height: 20px;
+}
+
 .stats-logo {
   width: 150px;
   height: 150px;
