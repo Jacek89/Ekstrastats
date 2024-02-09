@@ -398,4 +398,7 @@ def flag(country:str):
          'Wales': 'gb-wls',
          'Scotland': 'gb-sct',
          'Northern Ireland': 'gb-nir'}
-    return dict[country].lower()
+    try:
+        return dict[country].lower()
+    except KeyError:
+        return 'unknown'
