@@ -86,7 +86,7 @@ def summary_post(round_num: int, num_games: int, goals: int, gpm: float, score_s
                        " familiar surroundings, showcasing the importance of a strong home presence in influencing" \
                        " match outcomes. The league's landscape, shaped by these home victories, highlights " \
                        "the symbiotic relationship between teams and their passionate supporters."
-    elif score_stats['away'] / score_stats['home'] >= 2:
+    elif score_stats['home'] > 0 and score_stats['away'] / score_stats['home'] >= 2:
         body_scores = "<br><br>Noteworthy trend emerged with a considerable number of teams securing victories in away"\
                        " matches. The conventional advantage of playing on one's home turf seemed to have diminished," \
                        " as clubs demonstrated remarkable determination in triumphing over their opponents on their " \
@@ -140,8 +140,9 @@ def summary_post(round_num: int, num_games: int, goals: int, gpm: float, score_s
             'subtitle': subtitle,
             'body': body}
 
-def flag(country:str):
-    dict = {
+
+def flag(country: str):
+    country_dict = {
          'Afghanistan': 'AF',
          'Albania': 'AL',
          'Algeria': 'DZ',
@@ -399,6 +400,6 @@ def flag(country:str):
          'Scotland': 'gb-sct',
          'Northern Ireland': 'gb-nir'}
     try:
-        return dict[country].lower()
+        return country_dict[country].lower()
     except KeyError:
         return 'unknown'

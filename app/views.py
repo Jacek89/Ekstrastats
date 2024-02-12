@@ -141,7 +141,6 @@ def player_main(request, player_id):
 
 
 def round_summary(request, round_num):
-
     games = Game.objects.filter(round=round_num).select_related("team_home", "team_away").prefetch_related(
         Prefetch("game_goals", queryset=Goal.objects.select_related("scorer", "team_scored", "own_goal_scorer"))
     ).order_by("date")
@@ -163,7 +162,8 @@ def round_summary(request, round_num):
         assists=Count('player_assists__id', filter=Q(player_assists__game__round=round_num), distinct=True),
     ).annotate(
         combined_goals_assists=F('goals') + F('assists')
-    ).filter(combined_goals_assists__gt=1).order_by('-combined_goals_assists', '-goals', '-assists', 'last_name')
+    ).filter(combined_goals_assists__gt=1).select_related('team')\
+        .order_by('-combined_goals_assists', '-goals', '-assists', 'last_name')
 
     own_goals = Player.objects.annotate(own_goals=Count(
             'player_own_goals__id', filter=Q(player_own_goals__game__round=round_num), distinct=True
@@ -184,4 +184,3 @@ def round_summary(request, round_num):
     }
 
     return render(request, 'app/round.html', context)
-

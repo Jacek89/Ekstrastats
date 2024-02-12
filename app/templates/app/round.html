@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="col-md-4 pt-3">
-        <h3 class="title text-center bg-secondary bg-gradient py-1">ROUND {{round_num}} STATS</h3>
+        <h3 class="text-center bg-sec bg-gradient py-1">ROUND {{round_num}} STATS</h3>
         <table class="table table-light">
             <tr>
                 <td>Games Played</td>
@@ -79,12 +79,13 @@
                 <th>{{score_stats.away}} ({{score_stats.away|percent:num_games}})%</th>
             </tr>
         </table>
-        <h3 class="title text-center bg-secondary bg-gradient py-1">TOP PLAYERS</h3>
+        <h3 class="text-center bg-sec bg-gradient py-1">TOP PLAYERS</h3>
         <table class="table table-light">
             <tr><th>Player</th><th>G</th><th>A</th><th class="text-center">G + A</th></tr>
             {% for player in players_stats %}
             <tr>
-                <td><a href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
+                <td><img class='table-logo ms-2' src="{{player.team.logo}}">
+                    <a href="{%url 'player_main' player.id %}">{{player.full_name}}</a></td>
                 <td>{{player.goals}}</td>
                 <td>{{player.assists}}</td>
                 <td class="text-center">{{player.combined_goals_assists}}</td>

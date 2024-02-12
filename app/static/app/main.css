@@ -17,6 +17,13 @@ body {
   min-height: 100vh;
   padding: 0;
   background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.footer {
+  margin-top: auto;
 }
 
 * {
@@ -83,6 +90,13 @@ body {
   -webkit-transform: scale(1.1); /* Safari 3-8 */
   transform: scale(1.1);
 }
+
+.bg-sec {
+ background-color: #00468b;
+ color: #f9f9f9;
+ font-family: Impact, sans-serif;
+}
+
 
 .table-anchor {
   text-decoration: none;
