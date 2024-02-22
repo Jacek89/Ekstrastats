@@ -1,12 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Team, Player, Game, Goal
 from .utils.table import table
-from .utils.statistics import count_intervals, count_score_stats
+from .utils.statistics import count_intervals, count_score_stats, pois_probability_matrix
 from .utils.general import summary_post, flag
 from django.http import JsonResponse
-from .forms import TableDate
+from .forms import TableDate, PoisPredictForm
 from django.views import View
-from django.db.models import Count, Q, Min, Max, F, Prefetch
+from django.db.models import Count, Avg, Sum, Q, Min, Max, F, Prefetch, Value, IntegerField
+from django.db.models.functions import StrIndex, Substr, Cast
+from django.contrib import messages
 from Ekstrastats.settings.settings import SEASON
 
 from collections import defaultdict
@@ -184,3 +186,77 @@ def round_summary(request, round_num):
     }
 
     return render(request, 'app/round.html', context)
+
+
+# def analysis_main(request):
+#     pois_form = PoisPredictForm()
+#
+#
+#     context = {
+#         'pois_form': pois_form
+#     }
+#
+#     return render(request, 'app/analysis.html', context)
+
+def analysis_main(request):
+    opened_tab = None
+
+    if request.method == 'GET':
+        pois_form = PoisPredictForm(request.GET)
+        if pois_form.is_valid():
+            team_home = pois_form.cleaned_data['team_home']
+            team_away = pois_form.cleaned_data['team_away']
+            if team_home == team_away:
+                messages.error(request, "Team Home and Team Away need to be different")
+                opened_tab = 'pois'
+            else:
+                return redirect('analysis_pois', team_home=team_home.pk, team_away=team_away.pk)
+    else:
+        pois_form = PoisPredictForm()
+
+    context = {
+        'pois_form': pois_form,
+        'opened_tab': opened_tab
+    }
+
+    return render(request, 'app/analysis.html', context)
+
+
+def analysis_poisson(request, team_home, team_away):
+    th_id = team_home
+    ta_id = team_away
+
+    games_stats = Game.objects.all(
+    ).annotate(dash_pos=StrIndex(F('result'), Value('-'))
+               ).annotate(team_home_goals=Cast(Substr(F('result'), 1, F('dash_pos') - 1), IntegerField())
+                          ).annotate(team_away_goals=Cast(Substr(F('result'), F('dash_pos') + 1), IntegerField())
+                                     ).aggregate(
+        GHA=Avg('team_home_goals'), GAA=Avg('team_away_goals'),
+        team1_home_goals=Sum('team_home_goals', filter=Q(team_home=th_id)),
+        team1_home_games=Count('id', filter=Q(team_home=th_id)),
+        team2_goal_lost_away=Sum('team_home_goals', filter=Q(team_away=ta_id)),
+        team2_away_games=Count('id', filter=Q(team_away=ta_id)),
+        team2_away_goals=Sum('team_away_goals', filter=Q(team_away=ta_id)),
+        team1_goal_lost_home=Sum('team_away_goals', filter=Q(team_home=th_id))
+    )
+
+    team1_atk_strength = games_stats['team1_home_goals'] / games_stats['team1_home_games'] / games_stats['GHA']
+    team1_def_strength = games_stats['team1_goal_lost_home'] / games_stats['team1_home_games'] / games_stats['GAA']
+    team2_atk_strength = games_stats['team2_away_goals'] / games_stats['team2_away_games'] / games_stats['GAA']
+    team2_def_strength = games_stats['team2_goal_lost_away'] / games_stats['team2_away_games'] / games_stats['GHA']
+
+    expected_team1_goals = team1_atk_strength * team2_def_strength * games_stats['GHA']
+    expected_team2_goals = team2_atk_strength * team1_def_strength * games_stats['GAA']
+
+    matrix, max_prob = pois_probability_matrix(xg1=expected_team1_goals, xg2=expected_team2_goals)
+
+    context = {
+        'teams_ids': (th_id, ta_id),
+        'matrix': matrix,
+        'max_prob': max_prob,
+        'strength': (team1_atk_strength, team1_def_strength, team2_atk_strength, team2_def_strength),
+        'xg': (expected_team1_goals, expected_team2_goals),
+        'range': range(8)
+    }
+
+    return render(request, 'app/analysis_pois.html', context)

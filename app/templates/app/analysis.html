@@ -1,0 +1,51 @@
+{% extends "app/base.html" %}
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+
+<h1 class="title pt-2">Analysis</h1>
+
+{% if messages %}
+    <div class="alert alert-danger" role="alert">
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div class="analysis-container pt-2">
+  <div class="fs-5">Prediction of result based on Poisson distribution</div>
+  <div class="arrow arrow-down ms-1" id="pois-arrow"></div>
+</div>
+<div class="hidden-content px-3 pt-2" id="pois-content">
+    <div>
+        <p>The scoring patterns in soccer matches are modeled by a Poisson distribution, where the variables determining the likelihood of goals are influenced by both the attacking strenght of a team and the defensive strenght of their opponents. These parameters essentially represent the average number of goals scored and conceded by a team playing in relation to the league average. By adjusting these parameters based on data from the current Ekstraklasa season, it is possible to generate predictions for the number of goals scored by each team in a match.</p>
+    </div>
+    <div>
+      {% csrf_token %}
+      {% crispy pois_form pois_form.helper %}
+    </div>
+</div>
+<hr>
+
+<script nonce="{{request.csp_nonce}}">
+  const arrow = document.getElementById('pois-arrow');
+  const content = document.getElementById('pois-content');
+
+  arrow.addEventListener('click', function() {
+    if (content.style.display === 'none' || content.style.display === '') {
+      content.style.display = 'block';
+      arrow.classList.remove('arrow-down');
+      arrow.classList.add('arrow-up');
+    } else {
+      content.style.display = 'none';
+      arrow.classList.remove('arrow-up');
+      arrow.classList.add('arrow-down');
+    }
+  });
+</script>
+{% endblock content %}
+

@@ -1,6 +1,6 @@
 @font-face {
     font-family: "OldSport";
-    src: url("fonts/OldSport01CollegeNcv-aeGm.ttf") format("truetype");
+    src: url("../fonts/OldSport01CollegeNcv-aeGm.ttf") format("truetype");
 }
 
 a {
@@ -133,7 +133,7 @@ body {
 }
 
 .team-top {
- background: url("/static/app/team-bg.png");
+ background: url("/static/images/team-bg.png");
  padding: 20px;
 }
 
@@ -211,12 +211,12 @@ body {
 }
 
 .stats-top {
- background: url("/static/app/stats-bg.png");
+ background: url("/static/images/stats-bg.png");
  padding: 20px;
 }
 
 .player-top {
- background: url("/static/app/player-bg.png");
+ background: url("/static/images/player-bg.png");
  padding: 20px;
 }
 
@@ -233,7 +233,7 @@ body {
 
 .round-logo::before {
       content: "";
-      background-image: url("/static/app/ekstraklasa-logo.png");
+      background-image: url("/static/images/ekstraklasa-logo.png");
       position: absolute;
       top: 0px;
       right: 0px;

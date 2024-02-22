@@ -1,0 +1,120 @@
+.matrix {
+    border-spacing: 0;
+    border-collapse: collapse;
+    overflow: hidden;
+    z-index: 1;
+    text-align: center;
+}
+
+.cell {
+    cursor: pointer;
+    padding: 10px;
+    position: relative;
+}
+
+.cell:hover::before
+ {
+    background-color: #f1f1f1;
+    content: '\00a0';
+    height: 100%;
+    left: -5000px;
+    position: absolute;
+    top: 0;
+    width: 10000px;
+    z-index: -1;
+}
+
+.cell:hover::after
+ {
+    background-color: #f1f1f1;
+    content: '\00a0';
+    height: 10000px;
+    left: 0;
+    position: absolute;
+    top: -5000px;
+    width: 100%;
+    z-index: -1;
+}
+
+.legend-cell {
+  height:80px;
+  width:80px;
+}
+
+.width-600 {
+  max-width:600px;
+}
+
+.width-800 {
+  max-width:800px;
+}
+
+.analysis-container {
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  cursor: pointer;
+}
+
+.arrow-down {
+  border-top: 10px solid #666666;
+}
+
+.arrow-up {
+  border-bottom: 10px solid #666666;
+}
+
+.hidden-content {
+  display: none;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  }
+
+.pois-logo-container {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pois-result-logo {
+  width: 50px;
+  height: 50px;
+}
+
+.pois-logo {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+}
+
+.pois-logo1 {
+  bottom: 0;
+  left: 0;
+}
+
+.pois-logo2 {
+  top: 0;
+  right: 0;
+}
+
+.pois-divider {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(45deg, transparent 49.5%, black 50%, transparent 50.5%);
+}
+
+.rotate {
+     writing-mode: vertical-lr;
+    -webkit-transform: rotate(-180deg);
+    -moz-transform: rotate(-180deg);
+}

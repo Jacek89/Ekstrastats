@@ -2,6 +2,7 @@ from collections import defaultdict
 from bisect import bisect_left
 from typing import Iterable
 from ..models import Game
+import math
 
 
 def count_intervals(sequence, intervals):
@@ -30,3 +31,18 @@ def count_score_stats(games: Iterable[Game]):
         else:
             score_stats['draw'] += 1
     return score_stats
+
+
+def pois_probability_matrix(xg1, xg2):
+
+    def probability(actual, mean):
+        p = math.exp(-mean)
+        for i in range(actual):
+            p *= mean
+            p /= i+1
+        return p
+
+    matrix = [[probability(g1, xg1) * probability(g2, xg2)*100 for g1 in range(8)] for g2 in range(8)]
+    max_prob = max(map(max, matrix))
+    max_result = [(index, row.index(max_prob)) for index, row in enumerate(matrix) if max_prob in row]
+    return matrix, (max_result[0][1], max_result[0][0], max_prob)

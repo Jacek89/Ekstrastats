@@ -1,0 +1,88 @@
+{% extends "app/base.html" %}
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+<div class="width-800">
+  <h1 class="title pt-2">Analysis</h1>
+  <div class="fs-5 pt-2">Most likely ({{max_prob.2|floatformat:2}}%) result based on Poisson distribution:</div>
+  <br>
+  <div class="text-center">
+    <table><tr>
+      <td>{% for team in teams_extra %}
+        {% if team.id == teams_ids.0 %} <img class='pois-result-logo ms-2' src="{{team.logo}}">
+        <span class="ps-1 fs-4">{{team.name}}</span> {% endif %}
+        {% endfor %}
+      </td>
+      <td>
+        <p class="fs-4 px-2">{{max_prob.0}} - {{max_prob.1}}</p>
+      </td>
+      <td>
+      <td>
+        {% for team in teams_extra %}
+        {% if team.id == teams_ids.1 %} <span class="pe-1 fs-4">{{team.name}} </span>
+        <img class='pois-result-logo' src="{{team.logo}}"> {% endif %}
+        {% endfor %}
+      </td>
+    </tr></table>
+  </div>
+  <br>
+  <p>Parameters used for probability calculations:</p>
+  <div class="width-600">
+    <table class="table table-light text-center">
+      <tr><th>Team</th><th>Offensive Strength</th><th>Defensive Strength</th><th>Expected Goals</th></tr>
+      <tr><td class="text-end text-nowrap">{% for team in teams_extra %}
+        {% if team.id == teams_ids.0 %} {{team.name}} {% endif %}
+        {% endfor %}</td><td>{{strength.0|floatformat:4}}</td>
+        <td>{{strength.1|floatformat:4}}</td><td>{{xg.0|floatformat:4}}</td></tr>
+      <tr><td class="text-end text-nowrap">{% for team in teams_extra %}
+        {% if team.id == teams_ids.1 %} {{team.name}}  {% endif %}
+        {% endfor %}</td><td>{{strength.2|floatformat:4}}</td>
+        <td>{{strength.3|floatformat:4}}</td><td>{{xg.1|floatformat:4}}</td></tr>
+    </table>
+  </div>
+
+  <p class="pt-2"><span class="fw-bold">Offensive strength</span> -  example for home team - Number of goals scored at
+    home by the home team / number of home games played / average home all league goals per game.</p>
+  <p>When the result of this equation is 1.235, for example, it means that the home team scores 23.5%
+    more goals at home than the league average.</p>
+
+  <p><span class="fw-bold">Defensive Strength</span> – example for home team - Home team's average goals
+    conceded per home game / number of home games played / average home league goals conceded per game.</p>
+  <p>When the result of this equation is 0.653, for example, it means that the home conceded 34.7% fewer
+    goals at home in comparison to the average Ekstraklasa team.</p>
+  <p>Worth noting is that the higher the goal-loss rate is, the worse it is for the team.</p>
+  <p><span class="fw-bold">Expected goals</span> – example for home team - Home team attack strength * away team
+      defence strength * average number of home league goals per game.</p>
+  <p>This parameter is our lambda λ  in the Poisson distribution formula shown below.</p>
+  <img src="{% static 'images/pois-formula.png' %}">
+  <p class="pt-1 pb-3">The next step is to calculate the probability of scoring a certain number of goals in a match
+    (parameter k). We take the values from 0 to 7 representing the parameter k and calculate the probability of scoring
+    k goals for both teams (I assume that scoring more than 7 goals by one team is a marginal event). Once we have these values, we can calculate the probability of a particular result by multiplying with each other the individual probabilities for the teams to score a certain number of goals. The matrix resulting from multiplying the individual probabilities below.</p>
+  <table><tr><td></td><td class="text-center">Goals Team Home</td></tr>
+    <tr><td class="rotate">Goals Team Away</td><td>
+  <table class="matrix ms-1 mt-1">
+    <tr><th class="legend-cell">
+      <div class="pois-logo-container">{% for team in teams_extra %}{% if team.id == teams_ids.1 %}
+        <img src="{{team.logo}}" alt="Logo 1" class="pois-logo pois-logo1">{% endif %}{% endfor %}
+        {% for team in teams_extra %}{% if team.id == teams_ids.0 %}
+        <img src="{{team.logo}}" alt="Logo 1" class="pois-logo pois-logo2">{% endif %}{% endfor %}
+         <div class="pois-divider"></div>
+      </div>
+      </th><th class="border border-top-0">0</th><th class="border border-top-0">1</th>
+      <th class="border border-top-0">2</th><th class="border border-top-0">3</th><th class="border border-top-0">4</th>
+      <th class="border border-top-0">5</th><th class="border border-top-0">6</th><th class="border border-top-0">7</th>
+    </tr>
+    {% for row in matrix %}
+      <tr><th class="border border-start-0">{{forloop.counter0}}</th>
+        {% for col in row %}
+        {% if col == max_prob.2 %}<th class="border cell text-success">{{col|floatformat:2}}</th>
+        {% elif col < 0.5 %} <td class="border cell text-muted">{{col|floatformat:2}}</td>
+        {% else %} <td class="border cell">{{col|floatformat:2}}</td> {% endif %}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+  </table></td></tr></table>
+  <br><br>
+</div>
+{% endblock content %}
