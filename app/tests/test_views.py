@@ -186,3 +186,61 @@ class TestViewRoundSummary(TestCase):
     def test_view_context_goals_per_game(self):
         response = self.client.get(reverse('round', args=(1,)))
         self.assertAlmostEqual(response.context["goals_per_game"], 0.22)
+
+
+class TestViewAnalysis(TestCase):
+    def setUp(self):
+        TeamModelFactory.create_batch(3)
+        self.client = Client()
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('analysis'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        response = self.client.get(reverse('analysis'))
+        self.assertTemplateUsed(response, 'app/analysis.html')
+
+
+class TestViewPoisPrediction(TestCase):
+    def setUp(self):
+        team1 = TeamModelFactory.create(id=1)
+        team2 = TeamModelFactory.create(id=2)
+        teams = TeamModelFactory.create_batch(3)
+        GameModelFactory.create(team_home=team1, team_away=team2, result='2-0')
+        GameModelFactory.create(team_home=team1, team_away=teams[0], result='2-0')
+        GameModelFactory.create(team_home=team1, team_away=teams[1], result='5-3')
+        GameModelFactory.create(team_home=teams[1], team_away=team2, result='1-1')
+        GameModelFactory.create(team_home=teams[2], team_away=team2, result='3-0')
+        self.client = Client()
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('analysis_pois', args=(1, 2)))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        response = self.client.get(reverse('analysis_pois', args=(1, 2)))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/analysis_pois.html')
+
+    def test_view_context_team_ids(self):
+        response = self.client.get(reverse('analysis_pois', args=(1, 2)))
+        self.assertEqual(response.context["teams_ids"], (1, 2))
+
+    def test_view_context_strength(self):
+        response = self.client.get(reverse('analysis_pois', args=(1, 2)))
+        self.assertAlmostEqual(response.context["strength"][0], 1.153846153846154)
+        self.assertAlmostEqual(response.context["strength"][1], 1.25)
+        self.assertAlmostEqual(response.context["strength"][2], 0.4166666666666667)
+        self.assertAlmostEqual(response.context["strength"][3], 0.7692307692307692)
+
+    def test_view_context_expected_goals(self):
+        response = self.client.get(reverse('analysis_pois', args=(1, 2)))
+        self.assertAlmostEqual(response.context["xg"][0], 2.307692307692308)
+        self.assertAlmostEqual(response.context["xg"][1], 0.41666666666666674)
+
+    def test_view_context_most_likely_result(self):
+        response = self.client.get(reverse('analysis_pois', args=(1, 2)))
+        self.assertEqual(response.context["max_prob"][0], 2)
+        self.assertEqual(response.context["max_prob"][1], 0)
+        self.assertAlmostEqual(round(response.context["max_prob"][2], 2), 17.46)
