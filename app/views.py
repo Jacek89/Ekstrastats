@@ -167,9 +167,8 @@ def round_summary(request, round_num):
     ).filter(combined_goals_assists__gt=1).select_related('team')\
         .order_by('-combined_goals_assists', '-goals', '-assists', 'last_name')
 
-    own_goals = Player.objects.annotate(own_goals=Count(
-            'player_own_goals__id', filter=Q(player_own_goals__game__round=round_num), distinct=True
-            )).filter(own_goals__gt=0).select_related('team')
+    own_goals = Goal.objects.filter(Q(game__round=round_num) & Q(own_goal=True)
+                                    ).select_related('own_goal_scorer', 'team_against')
 
     context = {
         'round_num': round_num,

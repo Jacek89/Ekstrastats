@@ -43,7 +43,7 @@ class PlayerModelFactory(factory.django.DjangoModelFactory):
     full_name = factory.LazyAttribute(lambda o: f"{o.first_name} {o.last_name}")
     nationality = factory.Faker("current_country", locale=locale)
     birth_date = factory.fuzzy.FuzzyDate(
-        start_date=date.today().replace(year=date.today().year - 35),
+        start_date=date.today().replace(year=date.today().year - 36),
         end_date=date.today().replace(year=date.today().year - 16)
     )
     photo = factory.Faker('image_url')

@@ -26,10 +26,10 @@
                     </tr>
                     <tr>
                         <td>Team</td>
-                        <th>
+                        <th> { % if player.team %}
                             <a class='table-anchor' href="{%url 'team_main' player.team.id %}">
                             <img class='table-logo' src="{{player.team.logo}}"> {{player.team.name}}
-                            </a>
+                            </a> { % else %} None { % endif %}
                         </th>
                     </tr>
 

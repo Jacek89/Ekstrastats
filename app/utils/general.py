@@ -101,36 +101,36 @@ def summary_post(round_num: int, num_games: int, goals: int, gpm: float, score_s
 
         body_own_goals = "<br><br>In an unexpected turn of events during the matches, a rare occurrence unfolded" \
                          f" with {len(own_goals)} own goals, credited to" \
-                         f"{''.join(' %s from %s,' % (og.full_name, og.team.name) for og in own_goals)} The impact of" \
-                         " these unintentional contributions must have weighed heavily on their respective teams." \
-                         " The added challenge of scoring against one's own team not only alters the dynamics of the" \
-                         " match but also presents a unique mental hurdle for the players and their teams. Such " \
-                         "instances highlight the unpredictable nature of the sport, where even the most skilled " \
-                         "players can find themselves inadvertently influencing the outcome in unexpected ways, " \
-                         "adding an element of complexity to the beautiful game."
+                         f"{''.join(' %s from %s,' % (og.own_goal_scorer.full_name, og.team_against.name) for og in own_goals)}" \
+                         " The impact of these unintentional contributions must have weighed heavily on their " \
+                         "respective teams. The added challenge of scoring against one's own team not only alters " \
+                         "the dynamics of the match but also presents a unique mental hurdle for the players and " \
+                         "their teams. Such instances highlight the unpredictable nature of the sport, where even " \
+                         "the most skilled players can find themselves inadvertently influencing the outcome " \
+                         "in unexpected ways, adding an element of complexity to the beautiful game."
     elif len(own_goals) == 2:
-        body_own_goals = "<br><br>In a surprising turn of events during matches, two own goals were registered, with "\
-                          f"{own_goals[0].full_name} from {own_goals[0].team.name} and {own_goals[1].full_name} " \
-                          f"from {own_goals[1].team.name} finding themselves on the score sheet for the opposing " \
-                          "teams. The occurrence of own goals inevitably sparks curiosity about their potential " \
-                          "impact on the final standings of the league table. Such unexpected events can indeed " \
-                          "influence the overall outcome, as they contribute not only to the immediate match results" \
-                          " but also to the goal differentials crucial in determining the final rankings. The " \
-                          "unintended goals may introduce an element of unpredictability, leaving fans and pundits " \
-                          "alike speculating on the potential repercussions for the teams involved in the broader " \
-                          "context of the league standings."
+        body_own_goals = "<br><br>In a surprising turn of events during matches, two own goals were registered, with " \
+                         f"{own_goals[0].own_goal_scorer.full_name} from {own_goals[0].team_against.name} and " \
+                         f"{own_goals[1].own_goal_scorer.full_name} from {own_goals[1].team_against.name} finding " \
+                         "themselves on the score sheet for the opposing teams. The occurrence of own goals " \
+                         "inevitably sparks curiosity about their potential impact on the final standings of the " \
+                         "league table. Such unexpected events can indeed influence the overall outcome, as they " \
+                         "contribute not only to the immediate match results but also to the goal differentials " \
+                         "crucial in determining the final rankings. The unintended goals may introduce an element of" \
+                         " unpredictability, leaving fans and pundits alike speculating on the potential " \
+                         "repercussions for the teams involved in the broader context of the league standings."
     elif len(own_goals) == 1:
         body_own_goals = "<br><br>In a twist of fate during recent matches, a unique occurrence unfolded as an own " \
-                         f"goal was recorded, with {own_goals[0].full_name} from {own_goals[0].team.name}" \
-                          " inadvertently becoming the scorer. The question arises as to whether this " \
-                          "unexpected own goal will have a lasting impact on the final standings of the " \
-                          "league table. Beyond the immediate match result, own goals can play a role in " \
-                          "determining goal differentials, which in turn influence a team's overall position in" \
-                          " the standings. Additionally, the mental resilience of the player involved, in this " \
-                          f"case, {own_goals[0].full_name}, becomes a point of interest. Overcoming the " \
-                          "psychological impact of scoring an own goal requires considerable mental strength, " \
-                          "and how players navigate and bounce back from such situations can significantly " \
-                          "affect their performance in subsequent matches."
+                         f"goal was recorded, with {own_goals[0].own_goal_scorer.full_name} from " \
+                         f"{own_goals[0].team_against.name} inadvertently becoming the scorer. The question arises as" \
+                         " to whether this unexpected own goal will have a lasting impact on the final standings of " \
+                         "the league table. Beyond the immediate match result, own goals can play a role in " \
+                         "determining goal differentials, which in turn influence a team's overall position in" \
+                         " the standings. Additionally, the mental resilience of the player involved, in this " \
+                         f"case, {own_goals[0].own_goal_scorer.full_name}, becomes a point of interest. Overcoming " \
+                         f"the psychological impact of scoring an own goal requires considerable mental strength, " \
+                         "and how players navigate and bounce back from such situations can significantly " \
+                         "affect their performance in subsequent matches."
 
     footer = "<br><br>Text generated automatically<br><br>"
 
